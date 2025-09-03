@@ -1,73 +1,369 @@
+using System;
+using System.Collections.Generic;
+using EventBus;
+using Events;
+using Units;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerInput : MonoBehaviour
+namespace Player
 {
-    [SerializeField] private Transform cameraTarget;
-    [SerializeField] private CinemachineCamera cinemachineCamera;
-    [SerializeField] private float keyboardPanSpeed = 10f;
-    [SerializeField] private float minZoomDistance = 7.5f;
-    [SerializeField] private float zoomSpeed = 1f;
-
-    private CinemachineFollow _cinemachineFollow;
-    private float _zoomStartTime;
-    private Vector3 _startingFollowOffset;
-
-    private void Awake()
+    public class PlayerInput : MonoBehaviour
     {
-        if (!cinemachineCamera.TryGetComponent(out _cinemachineFollow))
+        [SerializeField] private Rigidbody cameraTarget;
+        [SerializeField] private CinemachineCamera cinemachineCamera;
+        [SerializeField] private new Camera camera;
+        [SerializeField] private CameraConfig cameraConfig;
+        [SerializeField] private LayerMask selectableUnitsLayers;
+        [SerializeField] private LayerMask floorLayers;
+        [SerializeField] private RectTransform selectionBox;
+
+        private Vector2 _startingMousePosition;
+        
+        private CinemachineFollow _cinemachineFollow;
+        private float _zoomStartTime;
+        private float _rotationStartTime;
+        private Vector3 _startingFollowOffset;
+        private float _maxRotationAmount;
+        private HashSet<AbstractUnit> _aliveUnits = new (100);
+        private HashSet<AbstractUnit> _addedUnits = new (24);
+        private List<ISelectable> _selectedUnits = new (12);
+
+        private void Awake()
         {
-            Debug.LogError("Cinemachine Camera did not have CinemachineFollow component. Zoom functionality will not work!");
+            if (!cinemachineCamera.TryGetComponent(out _cinemachineFollow))
+            {
+                Debug.LogError("Cinemachine Camera did not have CinemachineFollow component. Zoom functionality will not work!");
+            }
+
+            _startingFollowOffset = _cinemachineFollow.FollowOffset;
+            _maxRotationAmount = Mathf.Abs(_cinemachineFollow.FollowOffset.z);
+            // Cursor.lockState = CursorLockMode.Confined;
+            
+            Bus<UnitSelectedEvent>.OnEvent += HandleUnitSelected;
+            Bus<UnitDeselectedEvent>.OnEvent += HandleUnitDeselected;
+            Bus<UnitSpawnEvent>.OnEvent += HandleUnitSpawn;
         }
 
-        _startingFollowOffset = _cinemachineFollow.FollowOffset;
-    }
-
-    void Update()
-    {
-        HandlePanning();
-        HandleZooming();
-    }
-
-    private void HandleZooming()
-    {
-        if (Keyboard.current.endKey.wasPressedThisFrame)
+        private void OnDestroy()
         {
-            _zoomStartTime = Time.time;
+            Bus<UnitSelectedEvent>.OnEvent -= HandleUnitSelected;
+            Bus<UnitDeselectedEvent>.OnEvent -= HandleUnitDeselected;
+            Bus<UnitSpawnEvent>.OnEvent -= HandleUnitSpawn;
+        }
+
+        private void Update()
+        {
+            HandlePanning();
+            HandleZooming();
+            HandleRotation();
+            HandleRightClick();
+            HandleDragSelect();
         }
         
-        Vector3 targetFollowOffset = new (
-            _cinemachineFollow.FollowOffset.x,
-            0,
-            _cinemachineFollow.FollowOffset.z
-        );
-    }
-
-    private void HandlePanning()
-    {
-        Vector2 moveAmount = Vector2.zero;
-
-        if (Keyboard.current.upArrowKey.isPressed)
-        {
-            moveAmount.y += keyboardPanSpeed;
-        }
+        private void HandleUnitSpawn(UnitSpawnEvent evt) => _aliveUnits.Add(evt.Unit);
         
-        if (Keyboard.current.rightArrowKey.isPressed)
-        {
-            moveAmount.x += keyboardPanSpeed;
-        }
+        private void HandleUnitSelected(UnitSelectedEvent evt) => _selectedUnits.Add(evt.Unit);
         
-        if (Keyboard.current.leftArrowKey.isPressed)
+        private void HandleUnitDeselected(UnitDeselectedEvent evt) => _selectedUnits.Remove(evt.Unit);
+
+        private void HandleDragSelect()
         {
-            moveAmount.x -= keyboardPanSpeed;
+            if (selectionBox == null) { return; }
+            
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                HandleMouseDown();
+            }
+            else if (Mouse.current.leftButton.isPressed && !Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                HandleMouseDrag();
+            }
+            else if (Mouse.current.leftButton.wasReleasedThisFrame)
+            {
+                HandleMouseUp();
+            }
         }
 
-        if (Keyboard.current.downArrowKey.isPressed)
+        private void HandleMouseUp()
         {
-            moveAmount.y -= keyboardPanSpeed;
+            if (!Keyboard.current.shiftKey.isPressed)
+            {
+                DeselectAllUnits();
+            }
+
+            HandleLeftClick();
+            foreach (AbstractUnit unit in _addedUnits)
+            {
+                unit.Select();
+            }
+            selectionBox.gameObject.SetActive(false);
         }
-        moveAmount *= Time.deltaTime;
-        cameraTarget.position += new Vector3(moveAmount.x, 0, moveAmount.y);
+
+        private void HandleMouseDrag()
+        {
+            Bounds selectionBoxBounds = ResizeSelectionBox();
+
+            foreach (AbstractUnit unit in _aliveUnits)
+            {
+                Vector2 unitPosition = camera.WorldToScreenPoint(unit.transform.position);
+                if (selectionBoxBounds.Contains(unitPosition))
+                {
+                    _addedUnits.Add(unit);
+                }
+            }
+        }
+
+        private void HandleMouseDown()
+        {
+            selectionBox.sizeDelta = Vector2.zero;
+            selectionBox.gameObject.SetActive(true);
+            _startingMousePosition = Mouse.current.position.ReadValue();
+            _addedUnits.Clear();
+        }
+
+        private void DeselectAllUnits()
+        {
+            ISelectable[] currentlySelectedUnits = _selectedUnits.ToArray();
+
+            foreach (ISelectable selectable in currentlySelectedUnits)
+            {
+                selectable.Deselect();
+            }
+        }
+
+        private Bounds ResizeSelectionBox()
+        {
+            Vector2 mousePosition = Mouse.current.position.ReadValue();
+                
+            float width = mousePosition.x - _startingMousePosition.x;
+            float height = mousePosition.y - _startingMousePosition.y;
+
+            selectionBox.anchoredPosition = _startingMousePosition + new Vector2(width / 2, height / 2);
+            selectionBox.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
+            
+            return new Bounds(selectionBox.anchoredPosition, selectionBox.sizeDelta);
+        }
+
+        private void HandleRightClick()
+        {
+            if (_selectedUnits.Count == 0) { return; }
+            
+            Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+            if (Mouse.current.rightButton.wasReleasedThisFrame
+                && Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, floorLayers))
+            {
+                List<AbstractUnit> abstractUnits = new (_selectedUnits.Count);
+                foreach (ISelectable selectable in _selectedUnits)
+                {
+                    if (selectable is AbstractUnit unit)
+                    {
+                        abstractUnits.Add(unit);
+                    }
+                }
+
+                int unitsOnLayer = 0;
+                int maxUnitsOnLayer = 1;
+                float circleRadius = 0;
+                float radialOffset = 0;
+
+                foreach (AbstractUnit unit in abstractUnits)
+                {
+                    Vector3 targetPosition = new (
+                        hit.point.x + circleRadius * Mathf.Cos(radialOffset * unitsOnLayer), 
+                        hit.point.y, 
+                        hit.point.z + circleRadius * Mathf.Sin(radialOffset * unitsOnLayer)
+                    );
+                    
+                    unit.MoveTo(targetPosition);
+                    unitsOnLayer++;
+
+                    if (unitsOnLayer >= maxUnitsOnLayer)
+                    {
+                        unitsOnLayer = 0;
+                        circleRadius += unit.agentRadius * 3.5f;
+                        maxUnitsOnLayer = Mathf.FloorToInt(2 * Mathf.PI * circleRadius / (unit.agentRadius * 2));
+                        radialOffset = 2 * Mathf.PI / maxUnitsOnLayer;
+                    }
+                }
+
+                // foreach (ISelectable selectable in _selectedUnits)
+                // {
+                //     if (selectable is IMoveable moveable)
+                //     {
+                //         moveable.MoveTo(hit.point);
+                //     }
+                // }
+            }
+        }
+
+        private void HandleLeftClick()
+        {
+            if (camera == null) { return; } 
+            
+            Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+            
+            if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, selectableUnitsLayers) 
+                && hit.collider.TryGetComponent(out ISelectable selectable))
+            {
+                selectable.Select();
+            }
+        }
+
+        private void HandleRotation()
+        {
+            if (ShouldSetRotationStartTime())
+            {
+                _rotationStartTime = Time.time;
+            }
+        
+            float rotationTime = Mathf.Clamp01((Time.time - _rotationStartTime) * cameraConfig.rotationSpeed);
+        
+            Vector3 targetFollowOffset;
+
+            if (Keyboard.current.pageDownKey.isPressed)
+            {
+                targetFollowOffset = new Vector3(
+                    _maxRotationAmount,
+                    _cinemachineFollow.FollowOffset.y,
+                    0
+                );
+            }
+            else if (Keyboard.current.pageUpKey.isPressed)
+            {
+                targetFollowOffset = new Vector3(
+                    -_maxRotationAmount,
+                    _cinemachineFollow.FollowOffset.y,
+                    0
+                );
+            }
+            else
+            {
+                targetFollowOffset = new Vector3(
+                    _startingFollowOffset.x,
+                    _cinemachineFollow.FollowOffset.y,
+                    _startingFollowOffset.z
+                );
+            }
+
+            _cinemachineFollow.FollowOffset = Vector3.Slerp(_cinemachineFollow.FollowOffset,
+                targetFollowOffset,
+                rotationTime);
+        }
+
+        private bool ShouldSetRotationStartTime()
+        {
+            return Keyboard.current.pageUpKey.wasPressedThisFrame 
+                   || Keyboard.current.pageDownKey.wasPressedThisFrame
+                   || Keyboard.current.pageUpKey.wasReleasedThisFrame
+                   || Keyboard.current.pageDownKey.wasReleasedThisFrame;
+        }
+
+        private void HandleZooming()
+        {
+            if (ShouldSetZoomStartTime())
+            {
+                _zoomStartTime = Time.time;
+            }
+
+            float zoomTime = Mathf.Clamp01((Time.time - _zoomStartTime) * cameraConfig.zoomSpeed);
+            Vector3 targetFollowOffset;
+        
+            if (Keyboard.current.endKey.isPressed)
+            {
+                targetFollowOffset = new Vector3(
+                    _cinemachineFollow.FollowOffset.x,
+                    cameraConfig.minZoomDistance,
+                    _cinemachineFollow.FollowOffset.z
+                );
+            }
+            else
+            {
+                targetFollowOffset = new Vector3(
+                    _cinemachineFollow.FollowOffset.x,
+                    _startingFollowOffset.y,
+                    _cinemachineFollow.FollowOffset.z
+                );
+            }
+        
+            _cinemachineFollow.FollowOffset = Vector3.Slerp(
+                _cinemachineFollow.FollowOffset,
+                targetFollowOffset,
+                zoomTime
+            );
+        }
+
+        private bool ShouldSetZoomStartTime()
+        {
+            return Keyboard.current.endKey.wasPressedThisFrame 
+                   || Keyboard.current.endKey.wasReleasedThisFrame;
+        }
+
+        private void HandlePanning()
+        {
+            Vector2 moveAmount = GetKeyboardMoveAmount();
+            moveAmount += GetMouseMoveAmount();
+            cameraTarget.linearVelocity = new Vector3(moveAmount.x, 0, moveAmount.y);
+        }
+
+        private Vector2 GetMouseMoveAmount()
+        {
+            Vector2 moveAmount = Vector2.zero;
+            
+            if (!cameraConfig.enableEdgePan) { return moveAmount; }
+            
+            Vector2 mousePosition = Mouse.current.position.ReadValue();
+            int screenWidth = Screen.width;
+            int screenHeight = Screen.height;
+
+            if (mousePosition.x <= cameraConfig.edgePanSize)
+            {
+                moveAmount.x -= cameraConfig.mousePanSpeed;
+            }
+            else if (mousePosition.x >= screenWidth - cameraConfig.edgePanSize)
+            {
+                moveAmount.x += cameraConfig.mousePanSpeed;
+            }
+
+            if (mousePosition.y >= screenHeight - cameraConfig.edgePanSize)
+            {
+                moveAmount.y += cameraConfig.mousePanSpeed;
+            }
+            else if (mousePosition.y <= cameraConfig.edgePanSize)
+            {
+                moveAmount.y -= cameraConfig.mousePanSpeed;           
+            }
+            
+            return moveAmount;
+        }
+
+        private Vector2 GetKeyboardMoveAmount()
+        {
+            Vector2 moveAmount = Vector2.zero;
+            
+            if (Keyboard.current.upArrowKey.isPressed)
+            {
+                moveAmount.y += cameraConfig.keyboardPanSpeed;
+            }
+        
+            if (Keyboard.current.rightArrowKey.isPressed)
+            {
+                moveAmount.x += cameraConfig.keyboardPanSpeed;
+            }
+        
+            if (Keyboard.current.leftArrowKey.isPressed)
+            {
+                moveAmount.x -= cameraConfig.keyboardPanSpeed;
+            }
+
+            if (Keyboard.current.downArrowKey.isPressed)
+            {
+                moveAmount.y -= cameraConfig.keyboardPanSpeed;
+            }
+
+            return moveAmount;
+        }
     }
 }

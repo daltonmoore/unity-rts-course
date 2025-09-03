@@ -1,0 +1,9 @@
+﻿using UnityEngine;
+
+namespace Units
+{
+    public interface IMoveable
+    {
+        void MoveTo(Vector3 position);
+    }
+}
