@@ -183,8 +183,8 @@ namespace Player
                     if (unitsOnLayer >= maxUnitsOnLayer)
                     {
                         unitsOnLayer = 0;
-                        circleRadius += unit.agentRadius * 3.5f;
-                        maxUnitsOnLayer = Mathf.FloorToInt(2 * Mathf.PI * circleRadius / (unit.agentRadius * 2));
+                        circleRadius += unit.AgentRadius * 3.5f;
+                        maxUnitsOnLayer = Mathf.FloorToInt(2 * Mathf.PI * circleRadius / (unit.AgentRadius * 2));
                         radialOffset = 2 * Mathf.PI / maxUnitsOnLayer;
                     }
                 }
@@ -219,7 +219,7 @@ namespace Player
                 _rotationStartTime = Time.time;
             }
         
-            float rotationTime = Mathf.Clamp01((Time.time - _rotationStartTime) * cameraConfig.rotationSpeed);
+            float rotationTime = Mathf.Clamp01((Time.time - _rotationStartTime) * cameraConfig.RotationSpeed);
         
             Vector3 targetFollowOffset;
 
@@ -268,14 +268,14 @@ namespace Player
                 _zoomStartTime = Time.time;
             }
 
-            float zoomTime = Mathf.Clamp01((Time.time - _zoomStartTime) * cameraConfig.zoomSpeed);
+            float zoomTime = Mathf.Clamp01((Time.time - _zoomStartTime) * cameraConfig.ZoomSpeed);
             Vector3 targetFollowOffset;
         
             if (Keyboard.current.endKey.isPressed)
             {
                 targetFollowOffset = new Vector3(
                     _cinemachineFollow.FollowOffset.x,
-                    cameraConfig.minZoomDistance,
+                    cameraConfig.MinZoomDistance,
                     _cinemachineFollow.FollowOffset.z
                 );
             }
@@ -312,28 +312,28 @@ namespace Player
         {
             Vector2 moveAmount = Vector2.zero;
             
-            if (!cameraConfig.enableEdgePan) { return moveAmount; }
+            if (!cameraConfig.EnableEdgePan) { return moveAmount; }
             
             Vector2 mousePosition = Mouse.current.position.ReadValue();
             int screenWidth = Screen.width;
             int screenHeight = Screen.height;
 
-            if (mousePosition.x <= cameraConfig.edgePanSize)
+            if (mousePosition.x <= cameraConfig.EdgePanSize)
             {
-                moveAmount.x -= cameraConfig.mousePanSpeed;
+                moveAmount.x -= cameraConfig.MousePanSpeed;
             }
-            else if (mousePosition.x >= screenWidth - cameraConfig.edgePanSize)
+            else if (mousePosition.x >= screenWidth - cameraConfig.EdgePanSize)
             {
-                moveAmount.x += cameraConfig.mousePanSpeed;
+                moveAmount.x += cameraConfig.MousePanSpeed;
             }
 
-            if (mousePosition.y >= screenHeight - cameraConfig.edgePanSize)
+            if (mousePosition.y >= screenHeight - cameraConfig.EdgePanSize)
             {
-                moveAmount.y += cameraConfig.mousePanSpeed;
+                moveAmount.y += cameraConfig.MousePanSpeed;
             }
-            else if (mousePosition.y <= cameraConfig.edgePanSize)
+            else if (mousePosition.y <= cameraConfig.EdgePanSize)
             {
-                moveAmount.y -= cameraConfig.mousePanSpeed;           
+                moveAmount.y -= cameraConfig.MousePanSpeed;           
             }
             
             return moveAmount;
@@ -345,22 +345,22 @@ namespace Player
             
             if (Keyboard.current.upArrowKey.isPressed)
             {
-                moveAmount.y += cameraConfig.keyboardPanSpeed;
+                moveAmount.y += cameraConfig.KeyboardPanSpeed;
             }
         
             if (Keyboard.current.rightArrowKey.isPressed)
             {
-                moveAmount.x += cameraConfig.keyboardPanSpeed;
+                moveAmount.x += cameraConfig.KeyboardPanSpeed;
             }
         
             if (Keyboard.current.leftArrowKey.isPressed)
             {
-                moveAmount.x -= cameraConfig.keyboardPanSpeed;
+                moveAmount.x -= cameraConfig.KeyboardPanSpeed;
             }
 
             if (Keyboard.current.downArrowKey.isPressed)
             {
-                moveAmount.y -= cameraConfig.keyboardPanSpeed;
+                moveAmount.y -= cameraConfig.KeyboardPanSpeed;
             }
 
             return moveAmount;
