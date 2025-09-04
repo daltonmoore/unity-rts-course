@@ -17,8 +17,9 @@ namespace Units
             _agent = GetComponent<NavMeshAgent>();
         }
 
-        private void Start()
+        protected override void Start()
         {
+            base.Start();
             Bus<UnitSpawnEvent>.Raise(new UnitSpawnEvent(this));
         }
 

@@ -1,4 +1,5 @@
-﻿using EventBus;
+﻿using Commands;
+using EventBus;
 using Events;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -7,10 +8,19 @@ namespace Units
 {
     public abstract class AbstractCommandable : MonoBehaviour, ISelectable
     {
+        [field: SerializeField] public int CurrentHealth { get; private set; }
+        [field: SerializeField] public int MaxHealth { get; private set; }
+        [field: SerializeField] public ActionBase[] AvailableCommands { get; private set; }
+        
         [SerializeField] private DecalProjector decal;
-        
-        [field: SerializeField] public int Health { get; private set; }
-        
+        [SerializeField] private UnitSO unitSO;
+
+        protected virtual void Start()
+        {
+            CurrentHealth = unitSO.Health;
+            MaxHealth = unitSO.Health;
+        }
+
         public void Select()
         {
             if (decal != null)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Commands;
 using EventBus;
 using Events;
 using Units;
@@ -164,13 +165,22 @@ namespace Player
                     }
                 }
 
-                int unitsOnLayer = 0;
-                int maxUnitsOnLayer = 1;
-                float circleRadius = 0;
-                float radialOffset = 0;
+
 
                 foreach (AbstractUnit unit in abstractUnits)
                 {
+                    foreach (ICommand command in unit.AvailableCommands)
+                    {
+                        if (command.CanHandle(unit, hit))
+                        {
+                            command.Handle(unit, hit);
+                        }
+                    }
+                    
+                    int unitsOnLayer = 0;
+                    int maxUnitsOnLayer = 1;
+                    float circleRadius = 0;
+                    float radialOffset = 0;
                     Vector3 targetPosition = new (
                         hit.point.x + circleRadius * Mathf.Cos(radialOffset * unitsOnLayer), 
                         hit.point.y, 
@@ -179,7 +189,7 @@ namespace Player
                     
                     unit.MoveTo(targetPosition);
                     unitsOnLayer++;
-
+                    
                     if (unitsOnLayer >= maxUnitsOnLayer)
                     {
                         unitsOnLayer = 0;
