@@ -5,7 +5,11 @@ namespace Commands
 {
     public abstract class ActionBase : ScriptableObject, ICommand
     {
-        public abstract bool CanHandle(AbstractCommandable commandable, RaycastHit hit);
-        public abstract void Handle(AbstractCommandable commandable, RaycastHit hit);
+        [field: SerializeField] public Sprite Icon { get; private set; }
+        [field: Range(0, 8)] [field: SerializeField] public int Slot { get; private set; }
+        [field: SerializeField] public bool RequiresClickToActivate { get; private set; } = true;
+
+        public abstract bool CanHandle(CommandContext context);
+        public abstract void Handle(CommandContext context);
     }
 }

@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Commands;
 using EventBus;
 using Events;
 using Units;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace Player
@@ -19,9 +21,12 @@ namespace Player
         [SerializeField] private LayerMask selectableUnitsLayers;
         [SerializeField] private LayerMask floorLayers;
         [SerializeField] private RectTransform selectionBox;
+        [SerializeField] private Texture2D cursorTexture;
 
         private Vector2 _startingMousePosition;
-        
+
+        private ActionBase _activeAction;
+        private bool _wasMouseDownOnUI;
         private CinemachineFollow _cinemachineFollow;
         private float _zoomStartTime;
         private float _rotationStartTime;
@@ -41,10 +46,12 @@ namespace Player
             _startingFollowOffset = _cinemachineFollow.FollowOffset;
             _maxRotationAmount = Mathf.Abs(_cinemachineFollow.FollowOffset.z);
             // Cursor.lockState = CursorLockMode.Confined;
+            Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
             
             Bus<UnitSelectedEvent>.OnEvent += HandleUnitSelected;
             Bus<UnitDeselectedEvent>.OnEvent += HandleUnitDeselected;
             Bus<UnitSpawnEvent>.OnEvent += HandleUnitSpawn;
+            Bus<ActionSelectedEvent>.OnEvent += HandleActionSelected;
         }
 
         private void OnDestroy()
@@ -52,6 +59,7 @@ namespace Player
             Bus<UnitSelectedEvent>.OnEvent -= HandleUnitSelected;
             Bus<UnitDeselectedEvent>.OnEvent -= HandleUnitDeselected;
             Bus<UnitSpawnEvent>.OnEvent -= HandleUnitSpawn;
+            Bus<ActionSelectedEvent>.OnEvent -= HandleActionSelected;
         }
 
         private void Update()
@@ -62,6 +70,8 @@ namespace Player
             HandleRightClick();
             HandleDragSelect();
         }
+        
+        private void HandleActionSelected(ActionSelectedEvent evt) => _activeAction = evt.Action;
         
         private void HandleUnitSpawn(UnitSpawnEvent evt) => _aliveUnits.Add(evt.Unit);
         
@@ -89,7 +99,7 @@ namespace Player
 
         private void HandleMouseUp()
         {
-            if (!Keyboard.current.shiftKey.isPressed)
+            if (_activeAction is null && !Keyboard.current.shiftKey.isPressed)
             {
                 DeselectAllUnits();
             }
@@ -104,6 +114,8 @@ namespace Player
 
         private void HandleMouseDrag()
         {
+            if (_activeAction is not null || _wasMouseDownOnUI) { return; }
+            
             Bounds selectionBoxBounds = ResizeSelectionBox();
 
             foreach (AbstractUnit unit in _aliveUnits)
@@ -122,6 +134,7 @@ namespace Player
             selectionBox.gameObject.SetActive(true);
             _startingMousePosition = Mouse.current.position.ReadValue();
             _addedUnits.Clear();
+            _wasMouseDownOnUI = EventSystem.current.IsPointerOverGameObject();
         }
 
         private void DeselectAllUnits()
@@ -165,47 +178,18 @@ namespace Player
                     }
                 }
 
-
-
-                foreach (AbstractUnit unit in abstractUnits)
+                for (int i = 0; i < abstractUnits.Count; i++)
                 {
-                    foreach (ICommand command in unit.AvailableCommands)
+                    CommandContext context = new(abstractUnits[i], hit, i);
+                    foreach (ICommand command in abstractUnits[i].AvailableCommands)
                     {
-                        if (command.CanHandle(unit, hit))
+                        if (command.CanHandle(context))
                         {
-                            command.Handle(unit, hit);
+                            command.Handle(context);
+                            break;
                         }
                     }
-                    
-                    int unitsOnLayer = 0;
-                    int maxUnitsOnLayer = 1;
-                    float circleRadius = 0;
-                    float radialOffset = 0;
-                    Vector3 targetPosition = new (
-                        hit.point.x + circleRadius * Mathf.Cos(radialOffset * unitsOnLayer), 
-                        hit.point.y, 
-                        hit.point.z + circleRadius * Mathf.Sin(radialOffset * unitsOnLayer)
-                    );
-                    
-                    unit.MoveTo(targetPosition);
-                    unitsOnLayer++;
-                    
-                    if (unitsOnLayer >= maxUnitsOnLayer)
-                    {
-                        unitsOnLayer = 0;
-                        circleRadius += unit.AgentRadius * 3.5f;
-                        maxUnitsOnLayer = Mathf.FloorToInt(2 * Mathf.PI * circleRadius / (unit.AgentRadius * 2));
-                        radialOffset = 2 * Mathf.PI / maxUnitsOnLayer;
-                    }
                 }
-
-                // foreach (ISelectable selectable in _selectedUnits)
-                // {
-                //     if (selectable is IMoveable moveable)
-                //     {
-                //         moveable.MoveTo(hit.point);
-                //     }
-                // }
             }
         }
 
@@ -215,11 +199,30 @@ namespace Player
             
             Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
             
-            if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, selectableUnitsLayers) 
+            if (_activeAction is null 
+                && Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, selectableUnitsLayers) 
                 && hit.collider.TryGetComponent(out ISelectable selectable))
             {
                 selectable.Select();
             }
+            else if (_activeAction is not null 
+                     && !EventSystem.current.IsPointerOverGameObject()
+                     && Physics.Raycast(ray, out hit, float.MaxValue, floorLayers))
+            {
+                List<AbstractUnit> abstractUnits = _selectedUnits
+                    .Where((unit) => unit is AbstractUnit)
+                    .Cast<AbstractUnit>()
+                    .ToList();
+
+                for (int i = 0; i < abstractUnits.Count; i++)
+                {
+                    CommandContext context = new(abstractUnits[i], hit, i);
+                    _activeAction.Handle(context);
+                }
+                
+                _activeAction = null;
+            }
+            
         }
 
         private void HandleRotation()
