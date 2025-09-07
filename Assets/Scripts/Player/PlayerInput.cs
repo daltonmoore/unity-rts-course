@@ -70,9 +70,17 @@ namespace Player
             HandleRightClick();
             HandleDragSelect();
         }
-        
-        private void HandleActionSelected(ActionSelectedEvent evt) => _activeAction = evt.Action;
-        
+
+        private void HandleActionSelected(ActionSelectedEvent evt)
+        {
+            _activeAction = evt.Action;
+
+            if (!_activeAction.RequiresClickToActivate)
+            {
+                ActivateAction(new RaycastHit());
+            }
+        }
+
         private void HandleUnitSpawn(UnitSpawnEvent evt) => _aliveUnits.Add(evt.Unit);
         
         private void HandleUnitSelected(UnitSelectedEvent evt) => _selectedUnits.Add(evt.Unit);
@@ -209,20 +217,25 @@ namespace Player
                      && !EventSystem.current.IsPointerOverGameObject()
                      && Physics.Raycast(ray, out hit, float.MaxValue, floorLayers))
             {
-                List<AbstractUnit> abstractUnits = _selectedUnits
-                    .Where((unit) => unit is AbstractUnit)
-                    .Cast<AbstractUnit>()
-                    .ToList();
-
-                for (int i = 0; i < abstractUnits.Count; i++)
-                {
-                    CommandContext context = new(abstractUnits[i], hit, i);
-                    _activeAction.Handle(context);
-                }
-                
-                _activeAction = null;
+                ActivateAction(hit);
             }
             
+        }
+
+        private void ActivateAction(RaycastHit hit)
+        {
+            List<AbstractCommandable> abstractCommandables = _selectedUnits
+                .Where((commandable) => commandable is AbstractCommandable)
+                .Cast<AbstractCommandable>()
+                .ToList();
+
+            for (int i = 0; i < abstractCommandables.Count; i++)
+            {
+                CommandContext context = new(abstractCommandables[i], hit, i);
+                _activeAction.Handle(context);
+            }
+                
+            _activeAction = null;
         }
 
         private void HandleRotation()
