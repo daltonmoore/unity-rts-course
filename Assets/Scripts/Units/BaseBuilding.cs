@@ -20,14 +20,19 @@ namespace Units
             _buildingQueue.Enqueue(unit);
             if (_buildingQueue.Count == 1)
             {
-                StartCoroutine(DoBuildUnit(unit));
+                StartCoroutine(DoBuildUnit());
             }
         }
 
-        private IEnumerator DoBuildUnit(UnitSO unit)
+        private IEnumerator DoBuildUnit()
         {
-            yield return new WaitForSeconds(unit.BuildTime);
-            Instantiate(unit.Prefab, transform.position, Quaternion.identity);
+            while (_buildingQueue.Count > 0)
+            {
+                yield return new WaitForSeconds(_buildingQueue.Peek().BuildTime);
+                var unit = _buildingQueue.Dequeue();
+                Instantiate(unit.Prefab, transform.position, Quaternion.identity);
+            }
+            
         }
     }
 }

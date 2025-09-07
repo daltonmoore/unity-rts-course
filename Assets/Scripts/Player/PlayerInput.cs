@@ -107,7 +107,7 @@ namespace Player
 
         private void HandleMouseUp()
         {
-            if (_activeAction is null && !Keyboard.current.shiftKey.isPressed)
+            if (!_wasMouseDownOnUI && _activeAction is null && !Keyboard.current.shiftKey.isPressed)
             {
                 DeselectAllUnits();
             }
