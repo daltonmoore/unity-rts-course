@@ -9,15 +9,6 @@ namespace UI.Components
         [SerializeField] private RectTransform mask;
         private RectTransform _maskParentRectTransform;
 
-
-        //TODO: remove progress and update
-        [SerializeField] [Range(0,1)] private float progress;
-
-        private void Update()
-        {
-            SetProgress(progress);
-        }
-
         private void Awake()
         {
             if (mask is null)
