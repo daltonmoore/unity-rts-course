@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Units
@@ -7,6 +8,8 @@ namespace Units
     public class BaseBuilding : AbstractCommandable
     {
         public int QueueSize => _buildingQueue.Count;
+        public UnitSO[] BuildingQueue => _buildingQueue.ToArray();
+        
         [field: SerializeField] public float CurrentQueueStartTime { get; private set; }
         [field: SerializeField] public UnitSO BuildingUnit { get; private set; }
 
@@ -35,6 +38,14 @@ namespace Units
             {
                 OnQueueUpdated?.Invoke(_buildingQueue.ToArray());
             }
+        }
+
+        public void CancelBuild(UnitSO unitSO)
+        {
+            var list = _buildingQueue.ToList();
+            list.Remove(unitSO);
+            _buildingQueue = new Queue<UnitSO>(list);
+            OnQueueUpdated?.Invoke(_buildingQueue.ToArray());
         }
 
         private IEnumerator DoBuildUnit()
