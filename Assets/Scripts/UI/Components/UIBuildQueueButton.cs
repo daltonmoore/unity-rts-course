@@ -22,7 +22,7 @@ namespace UI.Components
 
         public void EnableFor(UnitSO item, UnityAction callback)
         {
-            
+            _button.onClick.RemoveAllListeners();
             _button.interactable = true;
             _button.onClick.AddListener(callback);
             icon.gameObject.SetActive(true);

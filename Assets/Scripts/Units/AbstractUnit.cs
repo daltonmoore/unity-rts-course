@@ -1,20 +1,24 @@
 ﻿using EventBus;
 using Events;
+using Unity.Behavior;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace Units
 {
-    [RequireComponent(typeof(NavMeshAgent))]
+    [RequireComponent(typeof(NavMeshAgent), typeof(BehaviorGraphAgent))]
     public abstract class AbstractUnit : AbstractCommandable, IMoveable
     {
         public float AgentRadius => _agent.radius;
         
         private NavMeshAgent _agent;
+        private BehaviorGraphAgent _graphAgent;
         
         private void Awake() 
         { 
             _agent = GetComponent<NavMeshAgent>();
+            _graphAgent = GetComponent<BehaviorGraphAgent>();
+            _graphAgent.SetVariableValue("Command", UnitCommands.Stop);
         }
 
         protected override void Start()
@@ -25,7 +29,13 @@ namespace Units
 
         public void MoveTo(Vector3 position)
         {
-            _agent.SetDestination(position);
+            _graphAgent.SetVariableValue("TargetLocation", position);
+            _graphAgent.SetVariableValue("Command", UnitCommands.Move);
+        }
+
+        public void Stop()
+        {
+            _graphAgent.SetVariableValue("Command", UnitCommands.Stop);
         }
     }
 }

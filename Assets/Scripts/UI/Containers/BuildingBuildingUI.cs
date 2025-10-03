@@ -16,28 +16,30 @@ namespace UI.Containers
         
         public void EnableFor(BaseBuilding item)
         {
+            progressBar.SetProgress(0);
             gameObject.SetActive(true);
             _building = item;
             _building.OnQueueUpdated += HandleQueueUpdated;
 
-            int i = 0;
+            SetUpUnitButtons();
             
-            if (_building.QueueSize == 0)
+            _buildCoroutine = StartCoroutine(UpdateUnitProgress());
+        }
+
+        private void SetUpUnitButtons()
+        {
+            int i = 0;
+
+            for (; i < _building.QueueSize; i++)
             {
-                for (; i < unitButtons.Length; i++)
-                {
-                    unitButtons[i].Disable();
-                }
-            }
-            else
-            {
-                for (; i < _building.QueueSize; i++)
-                {
-                    unitButtons[i].EnableFor(_building.BuildingQueue[i], UpdatedQueue(i));
-                }
+                int index = i;
+                unitButtons[i].EnableFor(_building.BuildingQueue[i], () => _building.CancelBuild(index));
             }
 
-            _buildCoroutine = StartCoroutine(UpdateUnitProgress());
+            for (; i < unitButtons.Length; i++)
+            {
+                unitButtons[i].Disable();
+            }
         }
 
         public void Disable()
@@ -50,15 +52,6 @@ namespace UI.Containers
             _building = null;
             _buildCoroutine = null;
         }
-        
-        private UnityAction UpdatedQueue(int index)
-        {
-            return () =>
-            {
-                unitButtons[index].Disable();
-                _building.CancelBuild(_building.BuildingQueue[index]);
-            };
-        }
 
         private void HandleQueueUpdated(UnitSO[] unitsInQueue)
         {
@@ -66,6 +59,8 @@ namespace UI.Containers
             {
                 _buildCoroutine = StartCoroutine(UpdateUnitProgress());
             }
+            
+            SetUpUnitButtons();
         }
 
         private IEnumerator UpdateUnitProgress()
@@ -80,6 +75,8 @@ namespace UI.Containers
                 
                 yield return null;
             }
+            
+            _buildCoroutine = null;
         }
     }
 }
