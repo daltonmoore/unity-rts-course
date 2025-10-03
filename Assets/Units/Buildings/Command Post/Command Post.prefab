@@ -73,8 +73,10 @@ MonoBehaviour:
   <MaxHealth>k__BackingField: 0
   <AvailableCommands>k__BackingField:
   - {fileID: 11400000, guid: 0505ce13ff3a5344cbbb1a3fc16a5434, type: 2}
+  <UnitSO>k__BackingField: {fileID: 11400000, guid: ff0d75649e7be38498d6367158bca163, type: 2}
   decal: {fileID: 8169265861661058192}
-  unitSO: {fileID: 11400000, guid: ff0d75649e7be38498d6367158bca163, type: 2}
+  <CurrentQueueStartTime>k__BackingField: 0
+  <BuildingUnit>k__BackingField: {fileID: 0}
 --- !u!208 &8560560243447458789
 NavMeshObstacle:
   m_ObjectHideFlags: 0

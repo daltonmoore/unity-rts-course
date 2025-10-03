@@ -28,7 +28,7 @@ namespace Behavior
         {
             if (_gatherStartTime + GatherableSupplies.Value.SupplySO.BaseGatherTime <= Time.time)
             {
-                int amountGathered = GatherableSupplies.Value.EndGather();
+                Amount.Value = GatherableSupplies.Value.EndGather();
                 return Status.Success;
             }
         

@@ -31,7 +31,7 @@ namespace Environment
             int amountGathered = Mathf.Min(Amount, SupplySO.AmountPerGather);
             Amount -= amountGathered;
             
-            if (Amount <= 0)
+            if (Amount <= 0 && gameObject != null)
             {
                 Destroy(gameObject);
             }
