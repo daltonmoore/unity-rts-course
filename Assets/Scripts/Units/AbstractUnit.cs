@@ -11,14 +11,15 @@ namespace Units
     {
         public float AgentRadius => _agent.radius;
         
-        private NavMeshAgent _agent;
-        private BehaviorGraphAgent _graphAgent;
+        protected BehaviorGraphAgent GraphAgent;
         
+        private NavMeshAgent _agent;
+
         private void Awake() 
         { 
             _agent = GetComponent<NavMeshAgent>();
-            _graphAgent = GetComponent<BehaviorGraphAgent>();
-            _graphAgent.SetVariableValue("Command", UnitCommands.Stop);
+            GraphAgent = GetComponent<BehaviorGraphAgent>();
+            GraphAgent.SetVariableValue("Command", UnitCommands.Stop);
         }
 
         protected override void Start()
@@ -29,13 +30,13 @@ namespace Units
 
         public void MoveTo(Vector3 position)
         {
-            _graphAgent.SetVariableValue("TargetLocation", position);
-            _graphAgent.SetVariableValue("Command", UnitCommands.Move);
+            GraphAgent.SetVariableValue("TargetLocation", position);
+            GraphAgent.SetVariableValue("Command", UnitCommands.Move);
         }
 
         public void Stop()
         {
-            _graphAgent.SetVariableValue("Command", UnitCommands.Stop);
+            GraphAgent.SetVariableValue("Command", UnitCommands.Stop);
         }
     }
 }

@@ -9,6 +9,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace Player
 {
@@ -20,6 +21,7 @@ namespace Player
         [SerializeField] private CameraConfig cameraConfig;
         [SerializeField] private LayerMask selectableUnitsLayers;
         [SerializeField] private LayerMask floorLayers;
+        [FormerlySerializedAs("gatherableSuppliesLayers")] [SerializeField] private LayerMask interactableLayers;
         [SerializeField] private RectTransform selectionBox;
         [SerializeField] private Texture2D cursorTexture;
 
@@ -175,7 +177,7 @@ namespace Player
             Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
 
             if (Mouse.current.rightButton.wasReleasedThisFrame
-                && Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, floorLayers))
+                && Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, interactableLayers | floorLayers))
             {
                 List<AbstractUnit> abstractUnits = new (_selectedUnits.Count);
                 foreach (ISelectable selectable in _selectedUnits)
@@ -215,7 +217,7 @@ namespace Player
             }
             else if (_activeAction is not null 
                      && !EventSystem.current.IsPointerOverGameObject()
-                     && Physics.Raycast(ray, out hit, float.MaxValue, floorLayers))
+                     && Physics.Raycast(ray, out hit, float.MaxValue, interactableLayers | floorLayers))
             {
                 ActivateAction(hit);
             }
@@ -232,7 +234,10 @@ namespace Player
             for (int i = 0; i < abstractCommandables.Count; i++)
             {
                 CommandContext context = new(abstractCommandables[i], hit, i);
-                _activeAction.Handle(context);
+                if (_activeAction.CanHandle(context))
+                {
+                    _activeAction.Handle(context);
+                }
             }
                 
             _activeAction = null;
