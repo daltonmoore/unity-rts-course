@@ -153,9 +153,9 @@ MonoBehaviour:
   <CurrentHealth>k__BackingField: 0
   <MaxHealth>k__BackingField: 0
   <AvailableCommands>k__BackingField:
+  - {fileID: 11400000, guid: d857b084d5409964bbb5cd4f144bd83f, type: 2}
   - {fileID: 11400000, guid: 6ccbe5f5983da6e4484e5702a84c6f44, type: 2}
   - {fileID: 11400000, guid: ac6a920dd5a4920438e5a138375e17c1, type: 2}
-  - {fileID: 11400000, guid: d857b084d5409964bbb5cd4f144bd83f, type: 2}
   <UnitSO>k__BackingField: {fileID: 11400000, guid: 2a1bf9e9222bbc843a84ae1ed3d0b979, type: 2}
   decal: {fileID: 7808055611623895356}
 --- !u!136 &6247014884995486581

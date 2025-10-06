@@ -23,7 +23,7 @@ namespace Behavior
                 return Status.Failure;
             }
 
-            Vector3 destination= GetDestination();
+            Vector3 destination = GetDestination();
             
             if (Vector3.Distance(_agent.transform.position, destination) <= _agent.stoppingDistance)
             {

@@ -9,7 +9,6 @@ namespace Units
         
         public void Gather(GatherableSupply supply)
         {
-            GraphAgent.SetVariableValue("TargetGameObject", supply.gameObject);
             GraphAgent.SetVariableValue("GatherableSupply", supply);
             GraphAgent.SetVariableValue("Command", UnitCommands.Gather);
         }
