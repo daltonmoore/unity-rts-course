@@ -3,6 +3,7 @@ using Unity.Behavior;
 using Unity.Properties;
 using UnityEngine;
 using UnityEngine.AI;
+using Utilities;
 using Action = Unity.Behavior.Action;
 
 namespace Behavior
@@ -15,6 +16,7 @@ namespace Behavior
         [SerializeReference] public BlackboardVariable<GameObject> TargetGameObject;
 
         private NavMeshAgent _agent;
+        private Animator _animator;
         
         protected override Status OnStart()
         {
@@ -22,6 +24,8 @@ namespace Behavior
             {
                 return Status.Failure;
             }
+            
+            _agent.TryGetComponent(out _animator);
 
             Vector3 destination = GetDestination();
             
@@ -37,6 +41,11 @@ namespace Behavior
 
         protected override Status OnUpdate()
         {
+            if (_animator != null)
+            {
+                _animator.SetFloat(AnimationConstants.SPEED, _agent.velocity.magnitude);
+            }
+            
             if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
             {
                 return Status.Success;
@@ -44,7 +53,15 @@ namespace Behavior
             
             return Status.Running;
         }
-        
+
+        protected override void OnEnd()
+        {
+            if (_animator != null)
+            {
+                _animator.SetFloat(AnimationConstants.SPEED, 0);
+            }
+        }
+
         private Vector3 GetDestination()
         {
             Vector3 destination;

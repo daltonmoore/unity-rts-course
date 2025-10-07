@@ -22,6 +22,7 @@ namespace Behavior
         [SerializeReference] public BlackboardVariable<SupplySO> GatherableSupplySO;
 
         private NavMeshAgent _agent;
+        private Animator _animator;
         private LayerMask _suppliesMask;
         private Collider[] _nearbyAvailableSupplies = new Collider[20];
         private SupplySO _supplySO;
@@ -30,16 +31,54 @@ namespace Behavior
         {
             _suppliesMask = LayerMask.GetMask("GatherableSupplies");
 
-
-
             if (!HasValidInputs())
             {
                 return Status.Failure;
             }
             
+            _agent.TryGetComponent(out _animator);
+            
             _agent.SetDestination(GetDestination());
             
             return Status.Running;
+        }
+        
+        protected override Status OnUpdate()
+        {
+            if (_animator != null)
+            {
+                _animator.SetFloat(AnimationConstants.SPEED, _agent.velocity.magnitude);
+            }
+            
+            if (_agent.pathPending || _agent.remainingDistance >= _agent.stoppingDistance)
+            {
+                return Status.Running;
+            }
+
+            if (Supply.Value != null && !Supply.Value.IsBusy && Supply.Value.Amount > 0)
+            {
+                return Status.Success;
+            }
+            
+            var size = FindNearbyAvailableSuppliesNonAlloc(_nearbyAvailableSupplies);
+
+            if (size > 0)
+            {
+                Array.Sort(_nearbyAvailableSupplies.Where(c => c is not null).ToArray(), new ClosestColliderComparer(_agent.transform.position));
+                Supply.Value = _nearbyAvailableSupplies[0].GetComponent<GatherableSupply>();
+                _agent.SetDestination(GetDestination());
+                return Status.Running;
+            }
+            
+            return Status.Failure;
+        }
+
+        protected override void OnEnd()
+        {
+            if (_animator != null)
+            {
+                _animator.SetFloat(AnimationConstants.SPEED, 0);
+            }
         }
 
         private bool HasValidInputs()
@@ -68,31 +107,6 @@ namespace Behavior
             }
 
             return true;
-        }
-
-        protected override Status OnUpdate()
-        {
-            if (_agent.pathPending || _agent.remainingDistance >= _agent.stoppingDistance)
-            {
-                return Status.Running;
-            }
-
-            if (Supply.Value != null && !Supply.Value.IsBusy && Supply.Value.Amount > 0)
-            {
-                return Status.Success;
-            }
-            
-            var size = FindNearbyAvailableSuppliesNonAlloc(_nearbyAvailableSupplies);
-
-            if (size > 0)
-            {
-                Array.Sort(_nearbyAvailableSupplies.Where(c => c is not null).ToArray(), new ClosestColliderComparer(_agent.transform.position));
-                Supply.Value = _nearbyAvailableSupplies[0].GetComponent<GatherableSupply>();
-                _agent.SetDestination(GetDestination());
-                return Status.Running;
-            }
-            
-            return Status.Failure;
         }
 
         private int FindNearbyAvailableSuppliesNonAlloc(Collider[] buffer)

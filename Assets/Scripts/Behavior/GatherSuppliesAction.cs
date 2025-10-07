@@ -3,6 +3,7 @@ using Environment;
 using Unity.Behavior;
 using Unity.Properties;
 using UnityEngine;
+using Utilities;
 using Action = Unity.Behavior.Action;
 
 namespace Behavior
@@ -15,6 +16,7 @@ namespace Behavior
         [SerializeReference] public BlackboardVariable<int> Amount;
         [SerializeReference] public BlackboardVariable<GatherableSupply> GatherableSupplies;
 
+        private Animator _animator;
         private float _gatherStartTime;
     
         protected override Status OnStart()
@@ -23,6 +25,12 @@ namespace Behavior
             {
                 return Status.Failure;
             }
+
+            if (Unit.Value.TryGetComponent(out _animator))
+            {
+                _animator.SetBool(AnimationConstants.IS_GATHERING, true);
+            }
+            
             _gatherStartTime = Time.time;
             GatherableSupplies.Value.BeginGather();
             return Status.Running;
@@ -40,6 +48,11 @@ namespace Behavior
 
         protected override void OnEnd()
         {
+            if (Unit.Value.TryGetComponent(out _animator))
+            {
+                _animator.SetBool(AnimationConstants.IS_GATHERING, false);
+            }
+            
             if (GatherableSupplies.Value == null) return;
             
             if (CurrentStatus == Status.Success)
