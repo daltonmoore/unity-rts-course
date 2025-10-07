@@ -18,7 +18,7 @@ namespace Behavior
         
         protected override Status OnStart()
         {
-            if (!Agent.Value.TryGetComponent(out _agent))
+            if (!Agent.Value.TryGetComponent(out _agent) || TargetGameObject.Value == null)
             {
                 return Status.Failure;
             }

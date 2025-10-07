@@ -38,5 +38,10 @@ namespace Environment
             
             return amountGathered;
         }
+
+        public void AbortGather()
+        {
+            IsBusy = false;
+        }
     }
 }

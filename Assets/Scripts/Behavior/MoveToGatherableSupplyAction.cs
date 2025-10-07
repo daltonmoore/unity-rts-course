@@ -23,57 +23,116 @@ namespace Behavior
 
         private NavMeshAgent _agent;
         private LayerMask _suppliesMask;
-        private Collider[] _nearbySupplyColliders = new Collider[20];
+        private Collider[] _nearbyAvailableSupplies = new Collider[20];
+        private SupplySO _supplySO;
         
         protected override Status OnStart()
         {
-            if (!Agent.Value.TryGetComponent(out _agent))
+            _suppliesMask = LayerMask.GetMask("GatherableSupplies");
+
+
+
+            if (!HasValidInputs())
             {
                 return Status.Failure;
             }
-
-            _suppliesMask = LayerMask.GetMask("GatherableSupplies");
+            
             _agent.SetDestination(GetDestination());
             
             return Status.Running;
         }
 
+        private bool HasValidInputs()
+        {
+            if (!Agent.Value.TryGetComponent(out _agent) || (Supply.Value == null && _supplySO == null))
+            {
+                return false;
+            }
+            
+            if (Supply.Value != null)
+            {
+                _supplySO = Supply.Value.SupplySO;
+            }
+            else
+            {
+                FindNearbyAvailableSuppliesNonAlloc(_nearbyAvailableSupplies);
+                if (_nearbyAvailableSupplies.Length > 0)
+                {
+                    Array.Sort(_nearbyAvailableSupplies.Where(c => c is not null).ToArray(), new ClosestColliderComparer(_agent.transform.position));
+                    Supply.Value = _nearbyAvailableSupplies[0].GetComponent<GatherableSupply>();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         protected override Status OnUpdate()
         {
-            if (!_agent.pathPending && _agent.remainingDistance >= _agent.stoppingDistance)
+            if (_agent.pathPending || _agent.remainingDistance >= _agent.stoppingDistance)
             {
                 return Status.Running;
             }
 
-            if (!Supply.Value.IsBusy && Supply.Value.Amount > 0)
+            if (Supply.Value != null && !Supply.Value.IsBusy && Supply.Value.Amount > 0)
             {
                 return Status.Success;
             }
+            
+            var size = FindNearbyAvailableSuppliesNonAlloc(_nearbyAvailableSupplies);
 
-            
-            Physics.OverlapSphereNonAlloc(
-                _agent.transform.position, 
-                SearchRadius, 
-                _nearbySupplyColliders, 
-                _suppliesMask);
-            
-            
-            var colliders = _nearbySupplyColliders.Where(collider => collider is not null 
-                                                                     && collider.TryGetComponent(out GatherableSupply supply) 
-                                                                     && !supply.IsBusy 
-                                                                     && supply.SupplySO.Equals(Supply.Value.SupplySO)).ToArray();
-
-            if (colliders.Length > 0)
+            if (size > 0)
             {
-                Array.Sort(colliders, new ClosestColliderComparer(_agent.transform.position));
-                Supply.Value = colliders[0].GetComponent<GatherableSupply>();
+                Array.Sort(_nearbyAvailableSupplies.Where(c => c is not null).ToArray(), new ClosestColliderComparer(_agent.transform.position));
+                Supply.Value = _nearbyAvailableSupplies[0].GetComponent<GatherableSupply>();
                 _agent.SetDestination(GetDestination());
                 return Status.Running;
             }
             
             return Status.Failure;
         }
-        
+
+        private int FindNearbyAvailableSuppliesNonAlloc(Collider[] buffer)
+        {
+            // Fill the buffer with nearby colliders without allocations.
+            int count = Physics.OverlapSphereNonAlloc(
+                _agent.transform.position,
+                SearchRadius.Value,
+                buffer,
+                _suppliesMask);
+
+            // Compact the buffer in-place to keep only available and matching supplies; return the new count.
+            int write = 0;
+            for (int read = 0; read < count; read++)
+            {
+                var col = buffer[read];
+                if (IsAvailableMatchingSupply(col))
+                {
+                    buffer[write++] = col;
+                }
+            }
+
+            // Clear any remaining entries to avoid stale references being used elsewhere.
+            for (int i = write; i < buffer.Length; i++)
+            {
+                buffer[i] = null;
+            }
+
+            return write;
+        }
+
+        private bool IsAvailableMatchingSupply(Collider collider)
+        {
+            if (collider == null) return false;
+            if (!collider.TryGetComponent(out GatherableSupply supply)) return false;
+            if (supply.IsBusy) return false;
+
+            return supply.SupplySO.Equals(_supplySO);
+        }
+
         private Vector3 GetDestination()
         {
             Vector3 destination;

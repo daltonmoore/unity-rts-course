@@ -19,6 +19,10 @@ namespace Behavior
     
         protected override Status OnStart()
         {
+            if (GatherableSupplies.Value == null)
+            {
+                return Status.Failure;
+            }
             _gatherStartTime = Time.time;
             GatherableSupplies.Value.BeginGather();
             return Status.Running;
@@ -28,11 +32,24 @@ namespace Behavior
         {
             if (_gatherStartTime + GatherableSupplies.Value.SupplySO.BaseGatherTime <= Time.time)
             {
-                Amount.Value = GatherableSupplies.Value.EndGather();
                 return Status.Success;
             }
         
             return Status.Running;       
+        }
+
+        protected override void OnEnd()
+        {
+            if (GatherableSupplies.Value == null) return;
+            
+            if (CurrentStatus == Status.Success)
+            {
+                Amount.Value = GatherableSupplies.Value.EndGather();
+            }
+            else
+            { 
+                GatherableSupplies.Value.AbortGather();
+            }
         }
     }
 }
