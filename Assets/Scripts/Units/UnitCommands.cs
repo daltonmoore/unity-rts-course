@@ -7,6 +7,7 @@ namespace Units
 	{
 		Stop,
 		Move,
-		Gather
+		Gather,
+		ReturnSupplies
 	}
 }

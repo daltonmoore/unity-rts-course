@@ -15,6 +15,7 @@ namespace Behavior
         [SerializeReference] public BlackboardVariable<GameObject> Unit;
         [SerializeReference] public BlackboardVariable<int> Amount;
         [SerializeReference] public BlackboardVariable<GatherableSupply> GatherableSupplies;
+        [SerializeReference] public BlackboardVariable<SupplySO> SupplySO;
 
         private Animator _animator;
         private float _gatherStartTime;
@@ -33,6 +34,7 @@ namespace Behavior
             
             _gatherStartTime = Time.time;
             GatherableSupplies.Value.BeginGather();
+            SupplySO.Value = GatherableSupplies.Value.SupplySO;
             return Status.Running;
         }
 
