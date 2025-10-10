@@ -76,7 +76,7 @@ MonoBehaviour:
   <UnitSO>k__BackingField: {fileID: 11400000, guid: ff0d75649e7be38498d6367158bca163, type: 2}
   decal: {fileID: 8169265861661058192}
   <CurrentQueueStartTime>k__BackingField: 0
-  <BuildingUnit>k__BackingField: {fileID: 0}
+  <BuildingUnit>k__BackingField: {fileID: 11400000, guid: 646f3cde6bbd728478113be59bca4d5d, type: 2}
 --- !u!208 &8560560243447458789
 NavMeshObstacle:
   m_ObjectHideFlags: 0

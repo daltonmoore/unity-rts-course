@@ -7,7 +7,7 @@ namespace Commands
     [CreateAssetMenu(fileName = "Gather Action", menuName = "Units/Commands/Gather", order = 105)]
     public class GatherCommand : ActionBase
     {
-        [SerializeField] private UnitSO commandPostSO;
+        [SerializeField] private AbstractUnitSO commandPostSO;
         
         public override bool CanHandle(CommandContext context)
         {

@@ -53,7 +53,7 @@ namespace UI.Containers
             _buildCoroutine = null;
         }
 
-        private void HandleQueueUpdated(UnitSO[] unitsInQueue)
+        private void HandleQueueUpdated(AbstractUnitSO[] unitsInQueue)
         {
             if (unitsInQueue.Length == 1 && _buildCoroutine == null)
             {

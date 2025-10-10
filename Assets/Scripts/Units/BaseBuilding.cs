@@ -8,19 +8,19 @@ namespace Units
     public class BaseBuilding : AbstractCommandable
     {
         public int QueueSize => _buildQueue.Count;
-        public UnitSO[] BuildingQueue => _buildQueue.ToArray();
+        public AbstractUnitSO[] BuildingQueue => _buildQueue.ToArray();
         
         [field: SerializeField] public float CurrentQueueStartTime { get; private set; }
-        [field: SerializeField] public UnitSO BuildingUnit { get; private set; }
+        [field: SerializeField] public AbstractUnitSO BuildingUnit { get; private set; }
 
-        public delegate void QueueUpdatedEvent(UnitSO[] unitsInQueue);
+        public delegate void QueueUpdatedEvent(AbstractUnitSO[] unitsInQueue);
         public event QueueUpdatedEvent OnQueueUpdated;
         
-        private List<UnitSO> _buildQueue = new (MAX_QUEUE_SIZE);
+        private List<AbstractUnitSO> _buildQueue = new (MAX_QUEUE_SIZE);
 
         private const int MAX_QUEUE_SIZE = 5;
 
-        public void BuildUnit(UnitSO unit)
+        public void BuildUnit(AbstractUnitSO unit)
         {
             if (_buildQueue.Count == MAX_QUEUE_SIZE)
             {

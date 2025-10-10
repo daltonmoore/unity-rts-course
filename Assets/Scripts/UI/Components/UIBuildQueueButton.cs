@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace UI.Components
 {
     [RequireComponent(typeof(Button))]
-    public class UIBuildQueueButton : MonoBehaviour, IUIElement<UnitSO, UnityAction>
+    public class UIBuildQueueButton : MonoBehaviour, IUIElement<AbstractUnitSO, UnityAction>
     {
         [SerializeField] private Image icon;
         
@@ -20,7 +20,7 @@ namespace UI.Components
             Disable();
         }
 
-        public void EnableFor(UnitSO item, UnityAction callback)
+        public void EnableFor(AbstractUnitSO item, UnityAction callback)
         {
             _button.onClick.RemoveAllListeners();
             _button.interactable = true;

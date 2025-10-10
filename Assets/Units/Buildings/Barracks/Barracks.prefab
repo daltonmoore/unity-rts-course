@@ -76,7 +76,7 @@ MonoBehaviour:
   <UnitSO>k__BackingField: {fileID: 11400000, guid: 0a83e1cdd77d10543b555a0a390e30bf, type: 2}
   decal: {fileID: 2473864045119251772}
   <CurrentQueueStartTime>k__BackingField: 0
-  <BuildingUnit>k__BackingField: {fileID: 0}
+  <BuildingUnit>k__BackingField: {fileID: 11400000, guid: a9ba3ec52fa52af40864c6861e2b1ec1, type: 2}
 --- !u!1 &6074371602342434812
 GameObject:
   m_ObjectHideFlags: 0
