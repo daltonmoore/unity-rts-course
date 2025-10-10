@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b24c9aa12a2d446194c31710ab2e13d4, type: 3}
+  m_Name: Show Buildings Action
+  m_EditorClassIdentifier: 
+  <Icon>k__BackingField: {fileID: 21300000, guid: a5df28aa58ab6264bb16fe1e21c4e327, type: 3}
+  <Slot>k__BackingField: 6
+  <RequiresClickToActivate>k__BackingField: 0
+  <Commands>k__BackingField:
+  - {fileID: 11400000, guid: ac6a920dd5a4920438e5a138375e17c1, type: 2}
+  - {fileID: 11400000, guid: ed96ba7176b986340a0221712072639a, type: 2}

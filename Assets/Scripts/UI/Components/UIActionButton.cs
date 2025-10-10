@@ -20,6 +20,7 @@ namespace UI.Components
 
         public void EnableFor(ActionBase action, UnityAction onClick)
         {
+            _button.onClick.RemoveAllListeners();
             SetIcon(action.Icon);
             _button.interactable = true;
             _button.onClick.AddListener(onClick);

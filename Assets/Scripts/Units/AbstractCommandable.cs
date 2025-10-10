@@ -16,10 +16,13 @@ namespace Units
 
         [SerializeField] private DecalProjector decal;
 
+        private ActionBase[] _initialCommands;
+
         protected virtual void Start()
         {
             CurrentHealth = UnitSO.Health;
             MaxHealth = UnitSO.Health;
+            _initialCommands = AvailableCommands;
         }
 
         public void Select()
@@ -37,7 +40,24 @@ namespace Units
             {
                 decal.gameObject.SetActive(false);
             }
+            
+            SetCommandOverrides(null);
+            
             Bus<UnitDeselectedEvent>.Raise(new UnitDeselectedEvent(this));
+        }
+
+        public void SetCommandOverrides(ActionBase[] overrides)
+        {
+            if (overrides == null || overrides.Length == 0)
+            {
+                AvailableCommands = _initialCommands;
+            }
+            else
+            {
+                AvailableCommands = overrides;
+            }
+            
+            Bus<UnitSelectedEvent>.Raise(new UnitSelectedEvent(this));
         }
     }
 }

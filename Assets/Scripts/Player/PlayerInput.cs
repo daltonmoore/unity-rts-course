@@ -84,9 +84,15 @@ namespace Player
         }
 
         private void HandleUnitSpawn(UnitSpawnEvent evt) => _aliveUnits.Add(evt.Unit);
-        
-        private void HandleUnitSelected(UnitSelectedEvent evt) => _selectedUnits.Add(evt.Unit);
-        
+
+        private void HandleUnitSelected(UnitSelectedEvent evt)
+        {
+            if (!_selectedUnits.Contains(evt.Unit))
+            {
+                _selectedUnits.Add(evt.Unit);
+            }
+        }
+
         private void HandleUnitDeselected(UnitDeselectedEvent evt) => _selectedUnits.Remove(evt.Unit);
 
         private void HandleDragSelect()
