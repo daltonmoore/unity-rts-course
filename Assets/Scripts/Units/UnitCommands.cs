@@ -8,6 +8,7 @@ namespace Units
 		Stop,
 		Move,
 		Gather,
-		ReturnSupplies
+		ReturnSupplies,
+		BuildBuilding
 	}
 }

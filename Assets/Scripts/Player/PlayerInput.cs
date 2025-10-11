@@ -28,6 +28,7 @@ namespace Player
         private Vector2 _startingMousePosition;
 
         private ActionBase _activeAction;
+        private GameObject _ghostInstance;
         private bool _wasMouseDownOnUI;
         private CinemachineFollow _cinemachineFollow;
         private float _zoomStartTime;
@@ -71,6 +72,26 @@ namespace Player
             HandleRotation();
             HandleRightClick();
             HandleDragSelect();
+            HandleGhostPrefab();
+        }
+
+        private void HandleGhostPrefab()
+        {
+            if (_ghostInstance == null) return;
+
+            if (Keyboard.current.escapeKey.wasReleasedThisFrame)
+            {
+                Destroy(_ghostInstance);
+                _ghostInstance = null;
+                _activeAction = null;
+                return;
+            }
+            
+            Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+            if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, floorLayers))
+            {
+                _ghostInstance.transform.position = hit.point;
+            }
         }
 
         private void HandleActionSelected(ActionSelectedEvent evt)
@@ -80,6 +101,10 @@ namespace Player
             if (!_activeAction.RequiresClickToActivate)
             {
                 ActivateAction(new RaycastHit());
+            }
+            else if (_activeAction.GhostPrefab != null)
+            {
+                _ghostInstance = Instantiate(_activeAction.GhostPrefab);
             }
         }
 
@@ -232,6 +257,11 @@ namespace Player
 
         private void ActivateAction(RaycastHit hit)
         {
+            if (_ghostInstance != null)
+            {
+                Destroy(_ghostInstance);
+                _ghostInstance = null;
+            }
             List<AbstractCommandable> abstractCommandables = _selectedUnits
                 .Where((commandable) => commandable is AbstractCommandable)
                 .Cast<AbstractCommandable>()
