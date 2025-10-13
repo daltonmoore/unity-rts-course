@@ -1,10 +1,12 @@
 
 using Behavior;
+using Commands;
 using Environment;
 using EventBus;
 using Events;
 using Unity.Behavior;
 using UnityEngine;
+using Utilities;
 
 namespace Units
 {
@@ -20,6 +22,9 @@ namespace Units
             return false;
             }
         }
+        
+        [SerializeField] private ActionBase cancelBuildingCommand;
+        
         protected override void Start()
         {
             base.Start();
@@ -61,7 +66,29 @@ namespace Units
             GraphAgent.SetVariableValue("TargetLocation", targetLocation);
             GraphAgent.SetVariableValue("Command", UnitCommands.BuildBuilding);
             
+            SetCommandOverrides(new[] { cancelBuildingCommand });
+            Bus<UnitSelectedEvent>.Raise(new UnitSelectedEvent(this));
+            
             return instance;
+        }
+
+        public void CancelBuilding()
+        {
+            if (GraphAgent.GetVariable("Ghost", out BlackboardVariable<GameObject> ghost) 
+                && ghost.Value != null)
+            {
+                Destroy(ghost.Value);
+            }
+            
+            if (GraphAgent.GetVariable("BuildingUnderConstruction", out BlackboardVariable<BaseBuilding> building) 
+                && building.Value != null)
+            {
+                Destroy(building.Value.gameObject);
+            }
+            
+            GraphAgent.SetVariableValue<BaseBuilding>("BuildingUnderConstruction", null);
+            SetCommandOverrides(null);
+            Stop();
         }
 
         private void HandleGatherSupplies(GameObject self, int amount, SupplySO supplySO)

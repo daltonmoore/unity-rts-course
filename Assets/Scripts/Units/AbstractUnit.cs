@@ -9,15 +9,16 @@ namespace Units
     [RequireComponent(typeof(NavMeshAgent), typeof(BehaviorGraphAgent))]
     public abstract class AbstractUnit : AbstractCommandable, IMoveable
     {
-        public float AgentRadius => _agent.radius;
+        public float AgentRadius => Agent.radius;
         
         protected BehaviorGraphAgent GraphAgent;
-        
-        private NavMeshAgent _agent;
+        protected NavMeshAgent Agent;
+        protected Animator Animator;
 
         private void Awake() 
         { 
-            _agent = GetComponent<NavMeshAgent>();
+            Agent = GetComponent<NavMeshAgent>();
+            Animator = GetComponent<Animator>();
             GraphAgent = GetComponent<BehaviorGraphAgent>();
             GraphAgent.SetVariableValue("Command", UnitCommands.Stop);
         }

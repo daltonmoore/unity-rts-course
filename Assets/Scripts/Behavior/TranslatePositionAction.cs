@@ -17,7 +17,6 @@ namespace Behavior
         [SerializeReference] public BlackboardVariable<float> Speed;
         
         private Animator _animator;
-        private NavMeshAgent _agent;
         private float _endTime;
         private Vector3 _direction;
         private Transform _selfTransform;
@@ -27,11 +26,6 @@ namespace Behavior
             if (Self.Value == null) return Status.Failure;
 
             _animator = Self.Value.GetComponent<Animator>();
-            
-            if (Self.Value.TryGetComponent(out _agent))
-            {
-                _agent.enabled = false;
-            }
             
             _selfTransform = Self.Value.transform;
             float distance = Vector3.Distance(_selfTransform.position, TargetLocation.Value);
@@ -62,11 +56,6 @@ namespace Behavior
             if (_animator != null)
             {
                 _animator.SetFloat(AnimationConstants.SPEED, 0);
-            }
-            
-            if (_agent != null)
-            {
-                _agent.enabled = true;
             }
         }
     }

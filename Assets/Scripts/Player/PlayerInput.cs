@@ -241,6 +241,7 @@ namespace Player
             Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
             
             if (_activeAction is null 
+                && !EventSystem.current.IsPointerOverGameObject()
                 && Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, selectableUnitsLayers) 
                 && hit.collider.TryGetComponent(out ISelectable selectable))
             {
