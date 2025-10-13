@@ -14,10 +14,13 @@ namespace Behavior
         [SerializeReference] public BlackboardVariable<GameObject> Self;
         [SerializeReference] public BlackboardVariable<BuildingSO> BuildingSO;
         [SerializeReference] public BlackboardVariable<Vector3> TargetLocation;
+        [SerializeReference] public BlackboardVariable<BaseBuilding> BuildingUnderConstruction;
 
         private float _startBuildTime;
         private BaseBuilding _completedBuilding;
         private Vector3 _startPosition;
+        private Vector3 _endPosition;
+        private Transform _rendererTransform;
         
         protected override Status OnStart()
         {
@@ -25,16 +28,26 @@ namespace Behavior
             
             _startBuildTime = Time.time;
             GameObject building = GameObject.Instantiate(BuildingSO.Value.Prefab);
-            _completedBuilding = building.GetComponent<BaseBuilding>();
+
+            if (!building.TryGetComponent(out _completedBuilding) || _completedBuilding.MainRenderer == null) 
+                return Status.Failure;
+            
+            BuildingUnderConstruction.Value = _completedBuilding;
+            _rendererTransform = _completedBuilding.MainRenderer.transform;
+            
             _startPosition = TargetLocation.Value - Vector3.up * _completedBuilding.MainRenderer.bounds.size.y;
-            _completedBuilding.transform.position = _startPosition;
+            _endPosition = TargetLocation.Value;
+            _completedBuilding.transform.position = _endPosition;
+            _completedBuilding.ShowGhostVisuals();
+            _rendererTransform.position = _rendererTransform.InverseTransformPoint(_startPosition);
+            
             return Status.Running;
         }
 
         protected override Status OnUpdate()
         {
             float normalizedTime = (Time.time - _startBuildTime) / BuildingSO.Value.BuildTime;
-            _completedBuilding.transform.position = Vector3.Lerp(_startPosition, TargetLocation.Value, normalizedTime);
+            _rendererTransform.position = Vector3.Lerp(_startPosition, _endPosition, normalizedTime);
             
             return normalizedTime >= 1 ? Status.Success : Status.Running;
         }
@@ -44,6 +57,7 @@ namespace Behavior
             if (CurrentStatus == Status.Success)
             {
                 _completedBuilding.enabled = true;
+                _completedBuilding.ResetDefaultVisuals();
             }
         }
         

@@ -6,5 +6,6 @@ namespace Units
     public class BuildingSO : AbstractUnitSO
     {
         [field: SerializeField] public Material PlacementMaterial { get; private set; }
+        [field: SerializeField] public Material DefaultMaterial { get; private set; }
     }
 }

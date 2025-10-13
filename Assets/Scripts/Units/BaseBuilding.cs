@@ -90,6 +90,11 @@ namespace Units
             MainRenderer.material = _buildingSO.PlacementMaterial;
         }
 
+        public void ResetDefaultVisuals()
+        {
+            MainRenderer.material = _buildingSO.DefaultMaterial;
+        }
+
         private IEnumerator DoBuildUnit()
         {
             while (_buildQueue.Count > 0)
