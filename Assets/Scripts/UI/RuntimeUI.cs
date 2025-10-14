@@ -6,6 +6,8 @@ using Events;
 using UI.Containers;
 using Units;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 namespace UI
 {
@@ -14,12 +16,15 @@ namespace UI
         [SerializeField] public ActionsUI actionsUI; 
         [SerializeField] public BuildingBuildingUI buildingBuildingUI;
         
+        private static RuntimeUI _instance;
         private HashSet<AbstractCommandable> _commandables = new (12);
         
         private void Awake()
         {
+            _instance = this;
             Bus<UnitSelectedEvent>.OnEvent += HandleUnitSelected;
             Bus<UnitDeselectedEvent>.OnEvent += HandleUnitDeselected;
+            Bus<UnitDeathEvent>.OnEvent += HandleUnitDeath;
         }
 
         private void Start()
@@ -32,6 +37,7 @@ namespace UI
         {
             Bus<UnitSelectedEvent>.OnEvent -= HandleUnitSelected;
             Bus<UnitDeselectedEvent>.OnEvent -= HandleUnitDeselected;
+            Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
         }
 
         private void HandleUnitSelected(UnitSelectedEvent evt)
@@ -55,26 +61,59 @@ namespace UI
             {
                 _commandables.Remove(commandable);
 
-                if (_commandables.Count > 0)
-                {
-                    actionsUI.EnableFor(_commandables);
+                RefreshUI();
+            }
+        }
+
+        private void RefreshUI()
+        {
+            if (_commandables.Count > 0)
+            {
+                actionsUI.EnableFor(_commandables);
                     
-                    if (_commandables.Count == 1 
-                        && _commandables.First() is BaseBuilding building)
-                    {
-                        buildingBuildingUI.EnableFor(building);
-                    }
-                    else
-                    {
-                        buildingBuildingUI.Disable();   
-                    }
-                }
-                if (_commandables.Count == 0)
+                if (_commandables.Count == 1 
+                    && _commandables.First() is BaseBuilding building)
                 {
-                    actionsUI.Disable();
-                    buildingBuildingUI.Disable();
+                    buildingBuildingUI.EnableFor(building);
+                }
+                else
+                {
+                    buildingBuildingUI.Disable();   
                 }
             }
+
+            if (_commandables.Count == 0)
+            {
+                actionsUI.Disable();
+                buildingBuildingUI.Disable();
+            }
+        }
+
+        private void HandleUnitDeath(UnitDeathEvent evt)
+        {
+            _commandables.Remove(evt.Unit);
+
+            RefreshUI();
+        }
+        
+        public static bool IsPointerOverCanvas()
+        {
+            PointerEventData eventData = new(EventSystem.current)
+            {
+                position = Mouse.current.position.ReadValue()
+            };
+
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, results);
+
+            foreach (RaycastResult result in results)
+            {
+                if (result.gameObject.transform.IsChildOf(_instance.transform))
+                {
+                    return true; // Pointer is over an element within the target canvas
+                }
+            }
+            return false; // Pointer is not over any element within the target canvas
         }
     }
 }

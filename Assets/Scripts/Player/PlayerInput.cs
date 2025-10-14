@@ -4,6 +4,7 @@ using System.Linq;
 using Commands;
 using EventBus;
 using Events;
+using UI;
 using Units;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -55,6 +56,7 @@ namespace Player
             Bus<UnitDeselectedEvent>.OnEvent += HandleUnitDeselected;
             Bus<UnitSpawnEvent>.OnEvent += HandleUnitSpawn;
             Bus<ActionSelectedEvent>.OnEvent += HandleActionSelected;
+            Bus<UnitDeathEvent>.OnEvent += HandleUnitDeath;
         }
 
         private void OnDestroy()
@@ -63,6 +65,7 @@ namespace Player
             Bus<UnitDeselectedEvent>.OnEvent -= HandleUnitDeselected;
             Bus<UnitSpawnEvent>.OnEvent -= HandleUnitSpawn;
             Bus<ActionSelectedEvent>.OnEvent -= HandleActionSelected;
+            Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
         }
 
         private void Update()
@@ -109,6 +112,12 @@ namespace Player
         }
 
         private void HandleUnitSpawn(UnitSpawnEvent evt) => _aliveUnits.Add(evt.Unit);
+
+        private void HandleUnitDeath(UnitDeathEvent evt)
+        {
+            _selectedUnits.Remove(evt.Unit);
+            _aliveUnits.Remove(evt.Unit);
+        }
 
         private void HandleUnitSelected(UnitSelectedEvent evt)
         {
@@ -241,7 +250,7 @@ namespace Player
             Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
             
             if (_activeAction is null 
-                && !EventSystem.current.IsPointerOverGameObject()
+                && !RuntimeUI.IsPointerOverCanvas()
                 && Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, selectableUnitsLayers) 
                 && hit.collider.TryGetComponent(out ISelectable selectable))
             {

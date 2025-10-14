@@ -1,4 +1,5 @@
-﻿using EventBus;
+﻿using System;
+using EventBus;
 using Events;
 using Unity.Behavior;
 using UnityEngine;
@@ -38,6 +39,11 @@ namespace Units
         public void Stop()
         {
             GraphAgent.SetVariableValue("Command", UnitCommands.Stop);
+        }
+
+        private void OnDestroy()
+        {
+            Bus<UnitDeathEvent>.Raise(new UnitDeathEvent(this));
         }
     }
 }
