@@ -38,7 +38,7 @@ namespace Behavior
             _startPosition = TargetLocation.Value - Vector3.up * _completedBuilding.MainRenderer.bounds.size.y;
             _endPosition = TargetLocation.Value;
             _completedBuilding.transform.position = _endPosition;
-            _completedBuilding.ShowGhostVisuals();
+            // _completedBuilding.ShowGhostVisuals();
             _rendererTransform.position = _rendererTransform.InverseTransformPoint(_startPosition);
             
             return Status.Running;
