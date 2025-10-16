@@ -8,7 +8,6 @@ namespace Commands
     public class BuildBuildingCommand : ActionBase
     {
         [field: SerializeField] public BuildingSO BuildingSO { get; private set; }
-        [field: SerializeField] public BuildingRestrictionSO[] Restrictions { get; private set; }
         
         public override bool CanHandle(CommandContext context)
         {
@@ -36,11 +35,6 @@ namespace Commands
             {
                 builder.Build(BuildingSO, context.Hit.point);
             }
-
-
         }
-        
-        private bool AllRestrictionsPass(Vector3 point) => 
-            Restrictions.Length == 0 || Restrictions.All(r => r.CanPlace(point));
     }
 }

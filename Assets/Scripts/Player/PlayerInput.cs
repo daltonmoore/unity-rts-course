@@ -25,11 +25,19 @@ namespace Player
         [FormerlySerializedAs("gatherableSuppliesLayers")] [SerializeField] private LayerMask interactableLayers;
         [SerializeField] private RectTransform selectionBox;
         [SerializeField] private Texture2D cursorTexture;
-
+        [SerializeField] [ColorUsage(showAlpha: true, hdr: true)] 
+        private Color errorTintColor = Color.red;
+        [SerializeField] [ColorUsage(showAlpha: true, hdr: true)] 
+        private Color errorFresnelColor = new (4, 1.7f, 0, 2);
+        [SerializeField] [ColorUsage(showAlpha: true, hdr: true)] 
+        private Color availableToPlaceTintColor = new (0.2f, 0.65f, 1, 2);
+        [SerializeField] [ColorUsage(showAlpha: true, hdr: true)] 
+        private Color availableToPlaceFresnelColor = new (4, 1.7f, 0, 2);
+        
         private Vector2 _startingMousePosition;
-
         private ActionBase _activeAction;
         private GameObject _ghostInstance;
+        private MeshRenderer _ghostRenderer;
         private bool _wasMouseDownOnUI;
         private CinemachineFollow _cinemachineFollow;
         private float _zoomStartTime;
@@ -40,6 +48,9 @@ namespace Player
         private HashSet<AbstractUnit> _addedUnits = new (24);
         private List<ISelectable> _selectedUnits = new (12);
 
+        private static readonly int TINT = Shader.PropertyToID("_Tint");
+        private static readonly int FRESNEL = Shader.PropertyToID("_FresnelColor");
+        
         private void Awake()
         {
             if (!cinemachineCamera.TryGetComponent(out _cinemachineFollow))
@@ -94,6 +105,12 @@ namespace Player
             if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, floorLayers))
             {
                 _ghostInstance.transform.position = hit.point;
+                bool allRestrictionsPass = _activeAction.AllRestrictionsPass(hit.point);
+                
+                _ghostRenderer.material.SetColor(TINT,
+                    allRestrictionsPass ? availableToPlaceTintColor : errorTintColor);
+                _ghostRenderer.material.SetColor(FRESNEL,
+                    allRestrictionsPass ? availableToPlaceFresnelColor : errorFresnelColor);
             }
         }
 
@@ -108,6 +125,7 @@ namespace Player
             else if (_activeAction.GhostPrefab != null)
             {
                 _ghostInstance = Instantiate(_activeAction.GhostPrefab);
+                _ghostRenderer = _ghostInstance.GetComponentInChildren<MeshRenderer>();
             }
         }
 
