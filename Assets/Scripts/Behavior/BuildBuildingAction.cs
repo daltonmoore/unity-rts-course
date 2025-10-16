@@ -25,12 +25,21 @@ namespace Behavior
         protected override Status OnStart()
         {
             if (!HasValidInputs()) return Status.Failure;
-            
-            _startBuildTime = Time.time;
-            GameObject building = GameObject.Instantiate(BuildingSO.Value.Prefab);
 
-            if (!building.TryGetComponent(out _completedBuilding) || _completedBuilding.MainRenderer == null) 
-                return Status.Failure;
+            if (BuildingUnderConstruction.Value == null)
+            {
+                GameObject building = GameObject.Instantiate(BuildingSO.Value.Prefab);
+                
+                if (!building.TryGetComponent(out _completedBuilding) || _completedBuilding.MainRenderer == null) 
+                    return Status.Failure;
+            }
+            else
+            {
+                _completedBuilding = BuildingUnderConstruction.Value;
+            }
+            
+            _completedBuilding.StartBuilding(Self.Value.GetComponent<IBuildingBuilder>());
+            _startBuildTime = _completedBuilding.Progress.StartTime;
             
             BuildingUnderConstruction.Value = _completedBuilding;
             _rendererTransform = _completedBuilding.MainRenderer.transform;
@@ -38,10 +47,9 @@ namespace Behavior
             _startPosition = TargetLocation.Value - Vector3.up * _completedBuilding.MainRenderer.bounds.size.y;
             _endPosition = TargetLocation.Value;
             _completedBuilding.transform.position = _endPosition;
-            // _completedBuilding.ShowGhostVisuals();
             _rendererTransform.position = _rendererTransform.InverseTransformPoint(_startPosition);
             
-            return Status.Running;
+            return OnUpdate();
         }
 
         protected override Status OnUpdate()

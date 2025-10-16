@@ -51,11 +51,7 @@ namespace Units
         {
             GameObject instance = Instantiate(building.Prefab, targetLocation, Quaternion.identity);
             
-            if (instance.TryGetComponent(out BaseBuilding baseBuilding))
-            {
-                baseBuilding.ShowGhostVisuals();
-            }
-            else
+            if (!instance.TryGetComponent(out BaseBuilding _))
             {
                 Debug.LogError($"Missing BaseBuilding on Prefab for BuildingSO \"{building.name}\"! Cannot build!");
                 return null;
@@ -70,6 +66,18 @@ namespace Units
             Bus<UnitSelectedEvent>.Raise(new UnitSelectedEvent(this));
             
             return instance;
+        }
+
+        public void ResumeBuilding(BaseBuilding building)
+        {
+            GraphAgent.SetVariableValue<GameObject>("Ghost", null);
+            GraphAgent.SetVariableValue("BuildingUnderConstruction", building);
+            GraphAgent.SetVariableValue("BuildingSO", building.BuildingSO);
+            GraphAgent.SetVariableValue("TargetLocation", building.transform.position);
+            GraphAgent.SetVariableValue("Command", UnitCommands.BuildBuilding);
+            
+            SetCommandOverrides(new[] { cancelBuildingCommand });
+            Bus<UnitSelectedEvent>.Raise(new UnitSelectedEvent(this));
         }
 
         public void CancelBuilding()

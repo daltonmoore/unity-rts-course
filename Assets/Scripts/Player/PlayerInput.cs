@@ -231,7 +231,7 @@ namespace Player
                 for (int i = 0; i < abstractUnits.Count; i++)
                 {
                     CommandContext context = new(abstractUnits[i], hit, i);
-                    foreach (ICommand command in abstractUnits[i].AvailableCommands)
+                    foreach (ICommand command in GetAvailableCommands(abstractUnits[i]))
                     {
                         if (command.CanHandle(context))
                         {
@@ -241,6 +241,27 @@ namespace Player
                     }
                 }
             }
+        }
+
+        private List<ActionBase> GetAvailableCommands(AbstractUnit unit)
+        {
+            OverrideCommandsCommand[] overrideCommands =
+            unit.AvailableCommands
+                .Where(command => command is OverrideCommandsCommand)
+                .Cast<OverrideCommandsCommand>()
+                .ToArray();
+
+            List<ActionBase> allAvailableCommands = new();
+            foreach (OverrideCommandsCommand overrideCommand in overrideCommands)
+            {
+                allAvailableCommands.AddRange(overrideCommand.Commands.Where(command => command is not OverrideCommandsCommand));
+            }
+            
+            allAvailableCommands.AddRange(unit.AvailableCommands
+                .Where(command => command is not OverrideCommandsCommand)
+            );
+
+            return allAvailableCommands;
         }
 
         private void HandleLeftClick()
@@ -280,10 +301,7 @@ namespace Player
             for (int i = 0; i < abstractCommandables.Count; i++)
             {
                 CommandContext context = new(abstractCommandables[i], hit, i);
-                if (_activeAction.CanHandle(context))
-                {
-                    _activeAction.Handle(context);
-                }
+                _activeAction.Handle(context);
             }
                 
             _activeAction = null;

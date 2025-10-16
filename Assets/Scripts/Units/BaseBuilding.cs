@@ -16,6 +16,8 @@ namespace Units
         [field: SerializeField] public float CurrentQueueStartTime { get; private set; }
         [field: SerializeField] public AbstractUnitSO BuildingUnit { get; private set; }
         [field: SerializeField] public MeshRenderer MainRenderer { get; private set; }
+        [field: SerializeField] public BuildingSO BuildingSO { get; private set; }
+        
         [SerializeField] private Material primaryMaterial;
         [SerializeField] private NavMeshObstacle navMeshObstacle;
         [field: SerializeField] public BuildingProgress Progress { get; private set; } = new (
@@ -25,14 +27,13 @@ namespace Units
         public event QueueUpdatedEvent OnQueueUpdated;
         
         private List<AbstractUnitSO> _buildQueue = new (MAX_QUEUE_SIZE);
-        private BuildingSO _buildingSO;
         private IBuildingBuilder _unitBuildingThis;
 
         private const int MAX_QUEUE_SIZE = 5;
 
         private void Awake()
         {
-            _buildingSO = UnitSO as BuildingSO;
+            BuildingSO = UnitSO as BuildingSO;
         }
 
         protected override void Start()
@@ -98,10 +99,10 @@ namespace Units
         public void StartBuilding(IBuildingBuilder builder)
         {
             _unitBuildingThis = builder;
-            MainRenderer.material = _buildingSO.PlacementMaterial;
+            MainRenderer.material = BuildingSO.PlacementMaterial;
             
             Progress = new BuildingProgress(
-                Time.time - _buildingSO.BuildTime * Progress.Progress,
+                Time.time - BuildingSO.BuildTime * Progress.Progress,
                 Progress.Progress,
                 BuildingProgress.BuildingState.Building);
 
@@ -116,7 +117,7 @@ namespace Units
 
                 Progress = new BuildingProgress(
                     Progress.StartTime,
-                    (Time.time - Progress.StartTime) / _buildingSO.BuildTime,
+                    (Time.time - Progress.StartTime) / BuildingSO.BuildTime,
                     BuildingProgress.BuildingState.Paused);
                 
                 Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
@@ -125,7 +126,7 @@ namespace Units
 
         public void ResetDefaultVisuals()
         {
-            MainRenderer.material = _buildingSO.DefaultMaterial;
+            MainRenderer.material = BuildingSO.DefaultMaterial;
         }
 
         private IEnumerator DoBuildUnit()

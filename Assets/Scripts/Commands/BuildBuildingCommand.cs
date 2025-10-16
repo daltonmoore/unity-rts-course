@@ -10,12 +10,32 @@ namespace Commands
         
         public override bool CanHandle(CommandContext context)
         {
-            return context.Commandable is IBuildingBuilder;
+            if (context.Commandable is not IBuildingBuilder) return false;
+
+            if (context.Hit.collider != null)
+            {
+                return context.Hit.collider.TryGetComponent(out BaseBuilding building)
+                    && BuildingSO == building.BuildingSO
+                    && building.Progress.State is 
+                        BuildingProgress.BuildingState.Paused or BuildingProgress.BuildingState.Destroyed;
+            }
+            
+            return true;
         }
 
         public override void Handle(CommandContext context)
         {
-            ((IBuildingBuilder)context.Commandable).Build(BuildingSO, context.Hit.point);
+            IBuildingBuilder builder = (IBuildingBuilder)context.Commandable;
+            if (context.Hit.collider != null && context.Hit.collider.TryGetComponent(out BaseBuilding building))
+            {
+                builder.ResumeBuilding(building);
+            }
+            else
+            {
+                builder.Build(BuildingSO, context.Hit.point);
+            }
+
+
         }
     }
 }
