@@ -1,4 +1,5 @@
-﻿using Units;
+﻿using System.Linq;
+using Units;
 using UnityEngine;
 
 namespace Commands
@@ -7,6 +8,7 @@ namespace Commands
     public class BuildBuildingCommand : ActionBase
     {
         [field: SerializeField] public BuildingSO BuildingSO { get; private set; }
+        [field: SerializeField] public BuildingRestrictionSO[] Restrictions { get; private set; }
         
         public override bool CanHandle(CommandContext context)
         {
@@ -20,7 +22,7 @@ namespace Commands
                         BuildingProgress.BuildingState.Paused or BuildingProgress.BuildingState.Destroyed;
             }
             
-            return true;
+            return AllRestrictionsPass(context.Hit.point);
         }
 
         public override void Handle(CommandContext context)
@@ -30,12 +32,15 @@ namespace Commands
             {
                 builder.ResumeBuilding(building);
             }
-            else
+            else if (AllRestrictionsPass(context.Hit.point))
             {
                 builder.Build(BuildingSO, context.Hit.point);
             }
 
 
         }
+        
+        private bool AllRestrictionsPass(Vector3 point) => 
+            Restrictions.Length == 0 || Restrictions.All(r => r.CanPlace(point));
     }
 }
