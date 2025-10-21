@@ -79,6 +79,10 @@ namespace Units
                 Debug.LogError("CancelBuild called with invalid index!");
                 return;
             }
+
+            AbstractUnitSO unitSO = BuildingQueue[index];
+            Bus<SupplyEvent>.Raise(new SupplyEvent(unitSO.Cost.Minerals, unitSO.Cost.MineralsSO));
+            Bus<SupplyEvent>.Raise(new SupplyEvent(unitSO.Cost.Gas, unitSO.Cost.GasSO));
             
             _buildQueue.RemoveAt(index);
             if (index == 0)

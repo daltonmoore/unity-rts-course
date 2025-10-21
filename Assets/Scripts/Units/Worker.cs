@@ -94,6 +94,10 @@ namespace Units
                 && building.Value != null)
             {
                 Destroy(building.Value.gameObject);
+                
+                BuildingSO buildingSO = building.Value.BuildingSO;
+                Bus<SupplyEvent>.Raise(new SupplyEvent(Mathf.FloorToInt(0.75f * buildingSO.Cost.Minerals), buildingSO.Cost.MineralsSO));
+                Bus<SupplyEvent>.Raise(new SupplyEvent(Mathf.FloorToInt(0.75f * buildingSO.Cost.Gas), buildingSO.Cost.GasSO));
             }
             
             GraphAgent.SetVariableValue<BaseBuilding>("BuildingUnderConstruction", null);
