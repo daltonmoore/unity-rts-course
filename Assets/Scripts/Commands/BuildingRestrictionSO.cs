@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace Commands
@@ -19,18 +20,13 @@ namespace Commands
         
         public bool CanPlace(Vector3 position)
         {
-            int hits = -1;
-            
-            switch (HitDetectionStyle)
+            int hits = HitDetectionStyle switch
             {
-                case OverlapStyle.Sphere: 
-                    hits = Physics.OverlapSphereNonAlloc(position, Radius, _hitColliders, LayerMask); 
-                    break;
-                
-                case OverlapStyle.Box:
-                    hits = Physics.OverlapBoxNonAlloc(position, Extents, _hitColliders, Quaternion.identity, LayerMask); 
-                    break;
-            }
+                OverlapStyle.Sphere => Physics.OverlapSphereNonAlloc(position, Radius, _hitColliders, LayerMask),
+                OverlapStyle.Box => Physics.OverlapBoxNonAlloc(
+                    position, Extents, _hitColliders, Quaternion.identity, LayerMask),
+                _ => throw new ArgumentOutOfRangeException()
+            };
             
             if (MustBeFullyOnNavMesh)
             {

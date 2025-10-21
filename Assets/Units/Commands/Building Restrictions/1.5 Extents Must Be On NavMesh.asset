@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac97cb964ca44a2da2ccadf045e8dc90, type: 3}
   m_Name: 1.5 Extents Must Be On NavMesh
   m_EditorClassIdentifier: 
+  <Radius>k__BackingField: 1
+  <LayerMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 128
+  <HitDetectionStyle>k__BackingField: 1
   <MustBeFullyOnNavMesh>k__BackingField: 1
   <NavMeshAgentTypeId>k__BackingField: 0
   <NavMeshTolerance>k__BackingField: 0.25

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Player;
 using Units;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ namespace Commands
                         BuildingProgress.BuildingState.Paused or BuildingProgress.BuildingState.Destroyed;
             }
             
-            return AllRestrictionsPass(context.Hit.point);
+            return HasEnoughSupplies() && AllRestrictionsPass(context.Hit.point);
         }
 
         public override void Handle(CommandContext context)
@@ -31,10 +32,13 @@ namespace Commands
             {
                 builder.ResumeBuilding(building);
             }
-            else if (AllRestrictionsPass(context.Hit.point))
+            else if (HasEnoughSupplies() && AllRestrictionsPass(context.Hit.point))
             {
                 builder.Build(BuildingSO, context.Hit.point);
             }
         }
+        
+        private bool HasEnoughSupplies() => BuildingSO.Cost.Minerals <= Supplies.Minerals && BuildingSO.Cost.Gas <= Supplies.Gas;
+        
     }
 }

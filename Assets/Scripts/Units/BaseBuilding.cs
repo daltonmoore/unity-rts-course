@@ -57,6 +57,9 @@ namespace Units
                 return;
             }
             
+            Bus<SupplyEvent>.Raise(new SupplyEvent(-unit.Cost.Minerals, unit.Cost.MineralsSO));
+            Bus<SupplyEvent>.Raise(new SupplyEvent(-unit.Cost.Gas, unit.Cost.GasSO));
+            
             _buildQueue.Add(unit);
             
             if (_buildQueue.Count == 1)
