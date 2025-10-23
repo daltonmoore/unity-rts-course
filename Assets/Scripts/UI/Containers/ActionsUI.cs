@@ -29,7 +29,7 @@ namespace UI.Containers
         
         private void RefreshButtons(HashSet<AbstractCommandable> selectedUnits)
         {
-            HashSet<ActionBase> availableCommands = new (9);
+            HashSet<BaseCommand> availableCommands = new (9);
 
             foreach (AbstractCommandable commandable in selectedUnits)
             {
@@ -38,11 +38,11 @@ namespace UI.Containers
 
             for (int i = 0; i < actionButtons.Length; i++)
             {
-                ActionBase actionForSlot = availableCommands.FirstOrDefault(action => action.Slot == i);
+                BaseCommand commandForSlot = availableCommands.FirstOrDefault(action => action.Slot == i);
 
-                if (actionForSlot is not null)
+                if (commandForSlot is not null)
                 {
-                    actionButtons[i].EnableFor(actionForSlot, HandleClick(actionForSlot));
+                    actionButtons[i].EnableFor(commandForSlot, HandleClick(commandForSlot));
                 }
                 else
                 {
@@ -51,9 +51,9 @@ namespace UI.Containers
             }
         }
 
-        private UnityAction HandleClick(ActionBase action)
+        private UnityAction HandleClick(BaseCommand action)
         {
-            return () => Bus<ActionSelectedEvent>.Raise(new ActionSelectedEvent(action));
+            return () => Bus<CommandSelectedEvent>.Raise(new CommandSelectedEvent(action));
         }
     }
 }

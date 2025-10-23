@@ -4,9 +4,9 @@ using UnityEngine;
 namespace Commands
 {
     [CreateAssetMenu(fileName = "Override Commands", menuName = "Units/Commands/Override", order = 110)]
-    public class OverrideCommandsCommand : ActionBase
+    public class OverrideCommandsCommand : BaseCommand
     {
-        [field: SerializeField] public ActionBase[] Commands { get; private set; }
+        [field: SerializeField] public BaseCommand[] Commands { get; private set; }
         
         public override bool CanHandle(CommandContext context)
         {
@@ -17,5 +17,7 @@ namespace Commands
         {
             context.Commandable.SetCommandOverrides(Commands);
         }
+     
+        public override bool IsLocked(CommandContext context) => false;
     }
 }

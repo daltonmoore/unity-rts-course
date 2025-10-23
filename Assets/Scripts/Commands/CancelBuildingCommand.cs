@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Commands
 {
     [CreateAssetMenu(fileName = "Cancel Building", menuName = "Units/Commands/Cancel Building", order = 130)]
-    public class CancelBuildingCommand : ActionBase
+    public class CancelBuildingCommand : BaseCommand
     {
         public override bool CanHandle(CommandContext context)
         {
@@ -16,5 +16,7 @@ namespace Commands
             IBuildingBuilder builder = (IBuildingBuilder)context.Commandable;
             builder.CancelBuilding();
         }
+        
+        public override bool IsLocked(CommandContext context) => false;
     }
 }

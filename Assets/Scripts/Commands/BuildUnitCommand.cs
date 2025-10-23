@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Commands
 {
     [CreateAssetMenu(fileName = "Build Unit", menuName = "Buildings/Commands/Build Unit", order = 120)]
-    public class BuildUnitCommand : ActionBase
+    public class BuildUnitCommand : BaseCommand
     {
         [field: SerializeField] public AbstractUnitSO Unit { get; private set; }
         
@@ -21,6 +21,8 @@ namespace Commands
             BaseBuilding building = (BaseBuilding)context.Commandable;
             building.BuildUnit(Unit);
         }
+        
+        public override bool IsLocked(CommandContext context) => !HasEnoughSupplies();
         
         private bool HasEnoughSupplies() => Unit.Cost.Minerals <= Supplies.Minerals && Unit.Cost.Gas <= Supplies.Gas;
     }

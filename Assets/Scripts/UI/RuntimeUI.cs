@@ -25,6 +25,7 @@ namespace UI
             Bus<UnitSelectedEvent>.OnEvent += HandleUnitSelected;
             Bus<UnitDeselectedEvent>.OnEvent += HandleUnitDeselected;
             Bus<UnitDeathEvent>.OnEvent += HandleUnitDeath;
+            Bus<SupplyEvent>.OnEvent += HandleSupplyEvent;
         }
 
         private void Start()
@@ -38,6 +39,12 @@ namespace UI
             Bus<UnitSelectedEvent>.OnEvent -= HandleUnitSelected;
             Bus<UnitDeselectedEvent>.OnEvent -= HandleUnitDeselected;
             Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
+            Bus<SupplyEvent>.OnEvent -= HandleSupplyEvent;
+        }
+        
+        private void HandleSupplyEvent(SupplyEvent evt)
+        {
+            actionsUI.EnableFor(_commandables);
         }
 
         private void HandleUnitSelected(UnitSelectedEvent evt)

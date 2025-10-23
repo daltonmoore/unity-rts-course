@@ -11,12 +11,12 @@ namespace Units
     {
         [field: SerializeField] public int CurrentHealth { get; private set; }
         [field: SerializeField] public int MaxHealth { get; private set; }
-        [field: SerializeField] public ActionBase[] AvailableCommands { get; private set; }
+        [field: SerializeField] public BaseCommand[] AvailableCommands { get; private set; }
         [field: SerializeField] public AbstractUnitSO UnitSO { get; private set; }
 
         [SerializeField] private DecalProjector decal;
 
-        private ActionBase[] _initialCommands;
+        private BaseCommand[] _initialCommands;
 
         protected virtual void Start()
         {
@@ -46,7 +46,7 @@ namespace Units
             Bus<UnitDeselectedEvent>.Raise(new UnitDeselectedEvent(this));
         }
 
-        public void SetCommandOverrides(ActionBase[] overrides)
+        public void SetCommandOverrides(BaseCommand[] overrides)
         {
             if (overrides == null || overrides.Length == 0)
             {

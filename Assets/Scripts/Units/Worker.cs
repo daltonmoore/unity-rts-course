@@ -23,7 +23,7 @@ namespace Units
             }
         }
         
-        [SerializeField] private ActionBase cancelBuildingCommand;
+        [SerializeField] private BaseCommand cancelBuildingCommand;
         
         protected override void Start()
         {

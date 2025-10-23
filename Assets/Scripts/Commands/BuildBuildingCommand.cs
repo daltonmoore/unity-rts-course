@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Commands
 {
     [CreateAssetMenu(fileName = "Build Building Action", menuName = "Units/Commands/Build Building", order = 120)]
-    public class BuildBuildingCommand : ActionBase
+    public class BuildBuildingCommand : BaseCommand
     {
         [field: SerializeField] public BuildingSO BuildingSO { get; private set; }
         
@@ -37,7 +37,9 @@ namespace Commands
                 builder.Build(BuildingSO, context.Hit.point);
             }
         }
-        
+
+        public override bool IsLocked(CommandContext context) => !HasEnoughSupplies();
+
         private bool HasEnoughSupplies() => BuildingSO.Cost.Minerals <= Supplies.Minerals && BuildingSO.Cost.Gas <= Supplies.Gas;
         
     }

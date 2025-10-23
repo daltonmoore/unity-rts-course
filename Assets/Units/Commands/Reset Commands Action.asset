@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b24c9aa12a2d446194c31710ab2e13d4, type: 3}
   m_Name: Reset Commands Action
   m_EditorClassIdentifier: 
+  <Name>k__BackingField: Cancel
   <Icon>k__BackingField: {fileID: 21300000, guid: 1a3a199fa1bcd2642a8472336cb43de1, type: 3}
   <Slot>k__BackingField: 8
   <RequiresClickToActivate>k__BackingField: 0
+  <GhostPrefab>k__BackingField: {fileID: 0}
+  <Restrictions>k__BackingField: []
   <Commands>k__BackingField: []

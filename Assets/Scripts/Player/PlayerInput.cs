@@ -35,7 +35,7 @@ namespace Player
         private Color availableToPlaceFresnelColor = new (4, 1.7f, 0, 2);
         
         private Vector2 _startingMousePosition;
-        private ActionBase _activeAction;
+        private BaseCommand _activeCommand;
         private GameObject _ghostInstance;
         private MeshRenderer _ghostRenderer;
         private bool _wasMouseDownOnUI;
@@ -66,7 +66,7 @@ namespace Player
             Bus<UnitSelectedEvent>.OnEvent += HandleUnitSelected;
             Bus<UnitDeselectedEvent>.OnEvent += HandleUnitDeselected;
             Bus<UnitSpawnEvent>.OnEvent += HandleUnitSpawn;
-            Bus<ActionSelectedEvent>.OnEvent += HandleActionSelected;
+            Bus<CommandSelectedEvent>.OnEvent += HandleCommandSelected;
             Bus<UnitDeathEvent>.OnEvent += HandleUnitDeath;
         }
 
@@ -75,7 +75,7 @@ namespace Player
             Bus<UnitSelectedEvent>.OnEvent -= HandleUnitSelected;
             Bus<UnitDeselectedEvent>.OnEvent -= HandleUnitDeselected;
             Bus<UnitSpawnEvent>.OnEvent -= HandleUnitSpawn;
-            Bus<ActionSelectedEvent>.OnEvent -= HandleActionSelected;
+            Bus<CommandSelectedEvent>.OnEvent -= HandleCommandSelected;
             Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
         }
 
@@ -97,7 +97,7 @@ namespace Player
             {
                 Destroy(_ghostInstance);
                 _ghostInstance = null;
-                _activeAction = null;
+                _activeCommand = null;
                 return;
             }
             
@@ -105,7 +105,7 @@ namespace Player
             if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, floorLayers))
             {
                 _ghostInstance.transform.position = hit.point;
-                bool allRestrictionsPass = _activeAction.AllRestrictionsPass(hit.point);
+                bool allRestrictionsPass = _activeCommand.AllRestrictionsPass(hit.point);
                 
                 _ghostRenderer.material.SetColor(TINT,
                     allRestrictionsPass ? availableToPlaceTintColor : errorTintColor);
@@ -114,17 +114,17 @@ namespace Player
             }
         }
 
-        private void HandleActionSelected(ActionSelectedEvent evt)
+        private void HandleCommandSelected(CommandSelectedEvent evt)
         {
-            _activeAction = evt.Action;
+            _activeCommand = evt.Command;
 
-            if (!_activeAction.RequiresClickToActivate)
+            if (!_activeCommand.RequiresClickToActivate)
             {
-                ActivateAction(new RaycastHit());
+                ActivateCommand(new RaycastHit());
             }
-            else if (_activeAction.GhostPrefab != null)
+            else if (_activeCommand.GhostPrefab != null)
             {
-                _ghostInstance = Instantiate(_activeAction.GhostPrefab);
+                _ghostInstance = Instantiate(_activeCommand.GhostPrefab);
                 _ghostRenderer = _ghostInstance.GetComponentInChildren<MeshRenderer>();
             }
         }
@@ -167,7 +167,7 @@ namespace Player
 
         private void HandleMouseUp()
         {
-            if (!_wasMouseDownOnUI && _activeAction is null && !Keyboard.current.shiftKey.isPressed)
+            if (!_wasMouseDownOnUI && _activeCommand is null && !Keyboard.current.shiftKey.isPressed)
             {
                 DeselectAllUnits();
             }
@@ -182,7 +182,7 @@ namespace Player
 
         private void HandleMouseDrag()
         {
-            if (_activeAction is not null || _wasMouseDownOnUI) { return; }
+            if (_activeCommand is not null || _wasMouseDownOnUI) { return; }
             
             Bounds selectionBoxBounds = ResizeSelectionBox();
 
@@ -261,7 +261,7 @@ namespace Player
             }
         }
 
-        private List<ActionBase> GetAvailableCommands(AbstractUnit unit)
+        private List<BaseCommand> GetAvailableCommands(AbstractUnit unit)
         {
             OverrideCommandsCommand[] overrideCommands =
             unit.AvailableCommands
@@ -269,7 +269,7 @@ namespace Player
                 .Cast<OverrideCommandsCommand>()
                 .ToArray();
 
-            List<ActionBase> allAvailableCommands = new();
+            List<BaseCommand> allAvailableCommands = new();
             foreach (OverrideCommandsCommand overrideCommand in overrideCommands)
             {
                 allAvailableCommands.AddRange(overrideCommand.Commands.Where(command => command is not OverrideCommandsCommand));
@@ -288,23 +288,23 @@ namespace Player
             
             Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
             
-            if (_activeAction is null 
+            if (_activeCommand is null 
                 && !RuntimeUI.IsPointerOverCanvas()
                 && Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, selectableUnitsLayers) 
                 && hit.collider.TryGetComponent(out ISelectable selectable))
             {
                 selectable.Select();
             }
-            else if (_activeAction is not null 
+            else if (_activeCommand is not null 
                      && !EventSystem.current.IsPointerOverGameObject()
                      && Physics.Raycast(ray, out hit, float.MaxValue, interactableLayers | floorLayers))
             {
-                ActivateAction(hit);
+                ActivateCommand(hit);
             }
             
         }
 
-        private void ActivateAction(RaycastHit hit)
+        private void ActivateCommand(RaycastHit hit)
         {
             if (_ghostInstance != null)
             {
@@ -319,10 +319,10 @@ namespace Player
             for (int i = 0; i < abstractCommandables.Count; i++)
             {
                 CommandContext context = new(abstractCommandables[i], hit, i);
-                _activeAction.Handle(context);
+                _activeCommand.Handle(context);
             }
                 
-            _activeAction = null;
+            _activeCommand = null;
         }
 
         private void HandleRotation()

@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f95cc13cc6d4c488d75a47400af6461, type: 3}
   m_Name: Stop Action
   m_EditorClassIdentifier: 
+  <Name>k__BackingField: Stop
   <Icon>k__BackingField: {fileID: 21300000, guid: af5afbd56621f394b8d6017ebda9401e, type: 3}
   <Slot>k__BackingField: 1
   <RequiresClickToActivate>k__BackingField: 0
+  <GhostPrefab>k__BackingField: {fileID: 0}
+  <Restrictions>k__BackingField: []
