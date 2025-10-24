@@ -47,6 +47,7 @@ namespace Units
             Progress = new BuildingProgress(Progress.StartTime, 1, BuildingProgress.BuildingState.Completed);
             _unitBuildingThis = null;
             Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
+            Bus<BuildingSpawnEvent>.Raise(new BuildingSpawnEvent(this));
         }
 
         public void BuildUnit(AbstractUnitSO unit)

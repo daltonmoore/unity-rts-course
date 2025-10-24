@@ -1,4 +1,7 @@
-﻿using Units;
+﻿using System;
+using EventBus;
+using Events;
+using Units;
 using UnityEngine;
 
 namespace UI.Containers
@@ -10,12 +13,13 @@ namespace UI.Containers
         [SerializeField] SingleUnitSelectedUI singleUnitSelectedUI;
         
         private BaseBuilding _selectedBuilding;
-        
+
         public void EnableFor(BaseBuilding building)
         {
             _selectedBuilding = building;
             _selectedBuilding.OnQueueUpdated -= OnBuildingQueueUpdated;
             _selectedBuilding.OnQueueUpdated += OnBuildingQueueUpdated;
+            
 
             if (building.Progress.State == BuildingProgress.BuildingState.Completed)
             {
@@ -27,6 +31,7 @@ namespace UI.Containers
                 buildingUnderConstructionUI.EnableFor(building);
                 buildingBuildingUI.Disable();
                 singleUnitSelectedUI.Disable();
+                Bus<BuildingSpawnEvent>.OnEvent += HandleBuildingSpawned;
             }
         }
 
@@ -35,6 +40,7 @@ namespace UI.Containers
             buildingUnderConstructionUI.Disable();
             buildingBuildingUI.Disable();
             singleUnitSelectedUI.Disable();
+            Bus<BuildingSpawnEvent>.OnEvent -= HandleBuildingSpawned;
             if (_selectedBuilding != null)
             { 
                 _selectedBuilding.OnQueueUpdated -= OnBuildingQueueUpdated;
@@ -53,6 +59,16 @@ namespace UI.Containers
             {
                 buildingBuildingUI.EnableFor(_selectedBuilding);
                 singleUnitSelectedUI.Disable();
+            }
+        }
+        
+        private void HandleBuildingSpawned(BuildingSpawnEvent evt)
+        {
+            if (evt.Building == _selectedBuilding)
+            {
+                Bus<BuildingSpawnEvent>.OnEvent -= HandleBuildingSpawned;
+                OnBuildingQueueUpdated();
+                buildingUnderConstructionUI.Disable();
             }
         }
     }
