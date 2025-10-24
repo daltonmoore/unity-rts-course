@@ -14,7 +14,9 @@ namespace UI
     public class RuntimeUI : MonoBehaviour
     {
         [SerializeField] public ActionsUI actionsUI; 
-        [SerializeField] public BuildingBuildingUI buildingBuildingUI;
+        [SerializeField] public BuildingSelectedUI buildingSelectedUI;
+        [SerializeField] public UnitIconUI unitIconUI;
+        [SerializeField] public SingleUnitSelectedUI singleUnitSelectedUI;
         
         private static RuntimeUI _instance;
         private HashSet<AbstractCommandable> _commandables = new (12);
@@ -31,7 +33,9 @@ namespace UI
         private void Start()
         {
             actionsUI.Disable();
-            buildingBuildingUI.Disable();
+            buildingSelectedUI.Disable();
+            unitIconUI.Disable();
+            singleUnitSelectedUI.Disable();
         }
 
         private void OnDestroy()
@@ -52,13 +56,7 @@ namespace UI
             if (evt.Unit is AbstractCommandable commandable)
             {
                 _commandables.Add(commandable);
-                actionsUI.EnableFor(_commandables);
-            }
-
-            if (_commandables.Count == 1 
-                && evt.Unit is BaseBuilding building)
-            {
-                buildingBuildingUI.EnableFor(building);
+                RefreshUI();
             }
         }
         
@@ -77,22 +75,37 @@ namespace UI
             if (_commandables.Count > 0)
             {
                 actionsUI.EnableFor(_commandables);
-                    
-                if (_commandables.Count == 1 
-                    && _commandables.First() is BaseBuilding building)
+
+                AbstractCommandable commandable = _commandables.First();
+                if (_commandables.Count == 1)
                 {
-                    buildingBuildingUI.EnableFor(building);
+                    unitIconUI.EnableFor(commandable);
+
+                    if (commandable is BaseBuilding building)
+                    {
+                        singleUnitSelectedUI.Disable();
+                        buildingSelectedUI.EnableFor(building);
+                    }
+                    else
+                    {
+                        buildingSelectedUI.Disable();
+                        singleUnitSelectedUI.EnableFor(commandable);
+                    }
                 }
                 else
                 {
-                    buildingBuildingUI.Disable();   
+                    unitIconUI.Disable();
+                    singleUnitSelectedUI.Disable();
+                    buildingSelectedUI.Disable();   
                 }
             }
 
             if (_commandables.Count == 0)
             {
                 actionsUI.Disable();
-                buildingBuildingUI.Disable();
+                buildingSelectedUI.Disable();
+                unitIconUI.Disable();
+                singleUnitSelectedUI.Disable();
             }
         }
 

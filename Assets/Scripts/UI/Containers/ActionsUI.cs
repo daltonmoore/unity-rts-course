@@ -33,7 +33,10 @@ namespace UI.Containers
 
             foreach (AbstractCommandable commandable in selectedUnits)
             {
-                availableCommands.UnionWith(commandable.AvailableCommands);
+                if (commandable.AvailableCommands != null)
+                {
+                    availableCommands.UnionWith(commandable.AvailableCommands);
+                }
             }
 
             for (int i = 0; i < actionButtons.Length; i++)

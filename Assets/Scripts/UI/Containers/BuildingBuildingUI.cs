@@ -59,8 +59,11 @@ namespace UI.Containers
             {
                 _buildCoroutine = StartCoroutine(UpdateUnitProgress());
             }
-            
-            SetUpUnitButtons();
+
+            if (_building != null)
+            {
+                SetUpUnitButtons();
+            }
         }
 
         private IEnumerator UpdateUnitProgress()

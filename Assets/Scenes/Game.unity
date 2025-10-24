@@ -6068,6 +6068,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 467497951}
+  - component: {fileID: 467497952}
   m_Layer: 5
   m_Name: Building Selected Container
   m_TagString: Untagged
@@ -6096,6 +6097,21 @@ RectTransform:
   m_AnchoredPosition: {x: 100, y: 0}
   m_SizeDelta: {x: -200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &467497952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 467497949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83e3c004c1404f209ad045b7b6e7ab33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildingBuildingUI: {fileID: 1619984283}
+  buildingUnderConstructionUI: {fileID: 678677022}
+  singleUnitSelectedUI: {fileID: 1315305436}
 --- !u!1 &468676273
 GameObject:
   m_ObjectHideFlags: 0
@@ -7588,7 +7604,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionsUI: {fileID: 1741608388}
-  buildingBuildingUI: {fileID: 1619984283}
+  buildingSelectedUI: {fileID: 467497952}
+  unitIconUI: {fileID: 1439996932}
+  singleUnitSelectedUI: {fileID: 1315305436}
 --- !u!114 &640315636
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7996,6 +8014,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 678677021}
+  - component: {fileID: 678677022}
   m_Layer: 5
   m_Name: Building Under Construction Container
   m_TagString: Untagged
@@ -8025,6 +8044,20 @@ RectTransform:
   m_AnchoredPosition: {x: -100, y: 0}
   m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &678677022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 678677020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f06108b9ae704b20b197b208f9a617dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitName: {fileID: 749207882}
+  progressBar: {fileID: 1819996209}
 --- !u!1 &679504034
 GameObject:
   m_ObjectHideFlags: 0
@@ -16936,13 +16969,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1315305435}
+  - component: {fileID: 1315305436}
   m_Layer: 5
   m_Name: Single Unit Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1315305435
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16965,6 +16999,19 @@ RectTransform:
   m_AnchoredPosition: {x: 100, y: 0}
   m_SizeDelta: {x: -200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1315305436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315305434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a6507c1ee564bbfa295e54d26fc5511, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitNameText: {fileID: 1266750878}
 --- !u!1001 &1316927690
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19707,13 +19754,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1439996931}
+  - component: {fileID: 1439996932}
   m_Layer: 5
   m_Name: Selected Unit Icon Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1439996931
 RectTransform:
   m_ObjectHideFlags: 0
@@ -19735,6 +19783,20 @@ RectTransform:
   m_AnchoredPosition: {x: 100.000046, y: 0}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1439996932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1439996930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ba5b949f8d499384a746cbba2673ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  icon: {fileID: 1431966782}
+  healthText: {fileID: 1936917055}
 --- !u!1 &1441022221
 GameObject:
   m_ObjectHideFlags: 0
@@ -25326,6 +25388,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4960964140495102217, guid: 599856f3bd9a1614f9c0db64f2ddcacd, type: 3}
   m_PrefabInstance: {fileID: 1819996207}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1819996209 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3247884327927568151, guid: 599856f3bd9a1614f9c0db64f2ddcacd, type: 3}
+  m_PrefabInstance: {fileID: 1819996207}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0861b098351a4a6394a5e1831501e79c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1821866811
 GameObject:
   m_ObjectHideFlags: 0
