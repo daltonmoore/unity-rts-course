@@ -12,6 +12,8 @@ namespace Units
 {
     public class Worker : AbstractUnit, IBuildingBuilder
     {
+        public bool IsBuilding => GraphAgent.GetVariable("Command", out BlackboardVariable<UnitCommands> command) 
+                                  && command.Value == UnitCommands.BuildBuilding;
         public bool HasSupplies {
             get
             {

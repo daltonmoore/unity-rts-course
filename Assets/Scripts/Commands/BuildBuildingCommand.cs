@@ -2,6 +2,7 @@
 using Player;
 using Units;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 
 namespace Commands
 {
@@ -12,9 +13,9 @@ namespace Commands
         
         public override bool CanHandle(CommandContext context)
         {
-            if (context.Commandable is not IBuildingBuilder) return false;
+            if (context.Commandable is not IBuildingBuilder builder || builder.IsBuilding) return false;
 
-            if (context.Hit.collider != null)
+            if (context.MouseButton == MouseButton.Right && context.Hit.collider != null)
             {
                 return context.Hit.collider.TryGetComponent(out BaseBuilding building)
                     && BuildingSO == building.BuildingSO

@@ -10,6 +10,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.Serialization;
 
 namespace Player
@@ -248,12 +249,18 @@ namespace Player
 
                 for (int i = 0; i < abstractUnits.Count; i++)
                 {
-                    CommandContext context = new(abstractUnits[i], hit, i);
+                    CommandContext context = new(abstractUnits[i], hit, i, MouseButton.Right);
                     foreach (ICommand command in GetAvailableCommands(abstractUnits[i]))
                     {
                         if (command.CanHandle(context))
                         {
                             command.Handle(context);
+
+                            if (command.IsSingleUnitCommand)
+                            {
+                                return;
+                            }
+                            
                             break;
                         }
                     }
@@ -319,7 +326,15 @@ namespace Player
             for (int i = 0; i < abstractCommandables.Count; i++)
             {
                 CommandContext context = new(abstractCommandables[i], hit, i);
-                _activeCommand.Handle(context);
+                if (_activeCommand.CanHandle(context))
+                {
+                    _activeCommand.Handle(context);
+                    
+                    if (_activeCommand.IsSingleUnitCommand)
+                    {
+                        break;
+                    }
+                }
             }
                 
             _activeCommand = null;
