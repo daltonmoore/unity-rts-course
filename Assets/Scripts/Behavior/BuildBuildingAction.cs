@@ -21,6 +21,7 @@ namespace Behavior
         private Vector3 _startPosition;
         private Vector3 _endPosition;
         private Transform _rendererTransform;
+        private float _targetHealth;
         
         protected override Status OnStart()
         {
@@ -55,6 +56,16 @@ namespace Behavior
         protected override Status OnUpdate()
         {
             float normalizedTime = (Time.time - _startBuildTime) / BuildingSO.Value.BuildTime;
+            
+            _targetHealth += Time.deltaTime * (BuildingSO.Value.Health / BuildingSO.Value.BuildTime);
+
+            if (_targetHealth >= 1)
+            {
+                int healAmount = Mathf.FloorToInt(_targetHealth);
+                _completedBuilding.Heal(healAmount);
+                _targetHealth -= healAmount;
+            }
+            
             _rendererTransform.position = Vector3.Lerp(_startPosition, _endPosition, normalizedTime);
             
             return normalizedTime >= 1 ? Status.Success : Status.Running;

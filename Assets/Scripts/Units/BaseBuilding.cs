@@ -34,6 +34,7 @@ namespace Units
         private void Awake()
         {
             BuildingSO = UnitSO as BuildingSO;
+            MaxHealth = BuildingSO.Health;
         }
 
         protected override void Start()
@@ -106,6 +107,7 @@ namespace Units
         
         public void StartBuilding(IBuildingBuilder builder)
         {
+            Awake(); // Called here because this script is not enabled when the building is placed, so Awake won't be called yet.
             _unitBuildingThis = builder;
             MainRenderer.material = BuildingSO.PlacementMaterial;
             
@@ -114,6 +116,12 @@ namespace Units
                 Progress.Progress,
                 BuildingProgress.BuildingState.Building);
 
+            if (Progress.Progress == 0)
+            {
+                // start building with 1 health
+                Heal(1);
+            }
+            
             Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
             Bus<UnitDeathEvent>.OnEvent += HandleUnitDeath;
         }
