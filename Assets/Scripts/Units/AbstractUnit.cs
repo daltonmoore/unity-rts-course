@@ -34,12 +34,14 @@ namespace Units
 
         public void MoveTo(Vector3 position)
         {
+            SetCommandOverrides(null);
             GraphAgent.SetVariableValue("TargetLocation", position);
             GraphAgent.SetVariableValue("Command", UnitCommands.Move);
         }
 
         public void Stop()
         {
+            SetCommandOverrides(null);
             GraphAgent.SetVariableValue("Command", UnitCommands.Stop);
         }
 

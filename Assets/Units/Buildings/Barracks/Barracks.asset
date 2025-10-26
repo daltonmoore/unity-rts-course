@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Barracks
   m_EditorClassIdentifier: 
   <Name>k__BackingField: Barracks
-  <Health>k__BackingField: 250
+  <Health>k__BackingField: 1000
   <Prefab>k__BackingField: {fileID: 5827066523746683823, guid: 0769b0d4430bf10488837724577a9cde, type: 3}
-  <BuildTime>k__BackingField: 5
+  <BuildTime>k__BackingField: 80
   <Icon>k__BackingField: {fileID: 21300000, guid: 05140302c0774b946a72e885e4c597e1, type: 3}
-  <Cost>k__BackingField: {fileID: 0}
+  <Cost>k__BackingField: {fileID: 11400000, guid: 5a5af31d5330a054fbfe2a2847cd8778, type: 2}
   <PlacementMaterial>k__BackingField: {fileID: 2100000, guid: 0a1d203cd7433d2478907c1116c8fd0a, type: 2}
-  <DefaultMaterial>k__BackingField: {fileID: 0}
+  <DefaultMaterial>k__BackingField: {fileID: 2100000, guid: b35c532178876e94f917ff0196f65258, type: 2}

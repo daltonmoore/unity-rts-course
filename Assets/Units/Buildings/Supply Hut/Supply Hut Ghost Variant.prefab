@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &8190869058485178599
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.47157526
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -55.918182
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3007753749229990871, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3651514625915729526, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_Layer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6964012305514025925, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+      propertyPath: m_Name
+      value: Supply Hut Ghost Variant
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 1881934992358907575, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+    - {fileID: 8658504161283779726, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+    - {fileID: 2422821575361291847, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+    m_RemovedGameObjects:
+    - {fileID: 2491705446440290278, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 60174e2531fe1794a81f4a279e17f61d, type: 3}

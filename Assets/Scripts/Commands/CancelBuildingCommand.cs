@@ -1,5 +1,6 @@
 ﻿using Units;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 
 namespace Commands
 {
@@ -8,7 +9,8 @@ namespace Commands
     {
         public override bool CanHandle(CommandContext context)
         {
-            return context.Commandable is IBuildingBuilder;
+            return context.Commandable is IBuildingBuilder
+                && context.MouseButton == MouseButton.Left;
         }
 
         public override void Handle(CommandContext context)

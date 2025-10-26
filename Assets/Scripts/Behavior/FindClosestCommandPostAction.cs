@@ -4,6 +4,7 @@ using Units;
 using Unity.Behavior;
 using Unity.Properties;
 using UnityEngine;
+using Utilities;
 using Action = Unity.Behavior.Action;
 
 namespace Behavior
@@ -27,7 +28,9 @@ namespace Behavior
             List<BaseBuilding> nearbyCommandPosts = new();
             foreach (Collider collider in colliders)
             {
-                if (collider.TryGetComponent(out BaseBuilding building) && building.UnitSO.Equals(CommandPostBuilding.Value))
+                if (collider.TryGetComponent(out BaseBuilding building) 
+                    && building.UnitSO.Equals(CommandPostBuilding.Value)
+                    && building.Progress.State == BuildingProgress.BuildingState.Completed)
                 {
                     nearbyCommandPosts.Add(building);
                 }
@@ -38,6 +41,7 @@ namespace Behavior
                 }
             }
             
+            nearbyCommandPosts.Sort(new ClosestCommandPostComparer(Unit.Value.transform.position));
             CommandPost.Value = nearbyCommandPosts[0].gameObject;
             
             return Status.Success;

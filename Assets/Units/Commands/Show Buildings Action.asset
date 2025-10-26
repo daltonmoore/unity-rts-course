@@ -15,9 +15,14 @@ MonoBehaviour:
   <Name>k__BackingField: Show Building Commands
   <Icon>k__BackingField: {fileID: 21300000, guid: a5df28aa58ab6264bb16fe1e21c4e327, type: 3}
   <Slot>k__BackingField: 6
+  <IsSingleUnitCommand>k__BackingField: 0
   <RequiresClickToActivate>k__BackingField: 0
   <GhostPrefab>k__BackingField: {fileID: 0}
   <Restrictions>k__BackingField: []
   <Commands>k__BackingField:
   - {fileID: 11400000, guid: 9dfaa3ce7d835644ea9c18e0af993016, type: 2}
+  - {fileID: 11400000, guid: 78a50505daaac1d4e9a34b34a3742142, type: 2}
+  - {fileID: 11400000, guid: e873ba1e754c6e847a209d778d0cefd9, type: 2}
+  - {fileID: 11400000, guid: 698519fe32a318b4994bafd945fe7fb3, type: 2}
+  - {fileID: 11400000, guid: b317f1a1d4bb5cb45ab01647fa18a0d5, type: 2}
   - {fileID: 11400000, guid: ed96ba7176b986340a0221712072639a, type: 2}
