@@ -7,10 +7,12 @@ using UnityEngine.Serialization;
 
 namespace Units
 {
-    public abstract class AbstractCommandable : MonoBehaviour, ISelectable
+    public abstract class AbstractCommandable : MonoBehaviour, ISelectable, IDamageable
     {
         [field: SerializeField] public bool IsSelected { get; protected set; }
         [field: SerializeField] public int CurrentHealth { get; protected set; }
+        public Transform Transform  => transform;
+
         [field: SerializeField] public int MaxHealth { get; protected set; }
         [field: SerializeField] public BaseCommand[] AvailableCommands { get; private set; }
         [field: SerializeField] public AbstractUnitSO UnitSO { get; private set; }
@@ -49,6 +51,23 @@ namespace Units
             SetCommandOverrides(null);
             
             Bus<UnitDeselectedEvent>.Raise(new UnitDeselectedEvent(this));
+        }
+        
+        public void TakeDamage(int damage)
+        {
+            int lastHealth = CurrentHealth;
+            CurrentHealth = Mathf.Clamp(CurrentHealth - damage, 0, CurrentHealth);
+
+            OnHealthUpdated?.Invoke(this, lastHealth, CurrentHealth);
+            if (CurrentHealth == 0)
+            {
+                Die();
+            }
+        }
+
+        public void Die()
+        {
+            Destroy(gameObject);
         }
 
         public void SetCommandOverrides(BaseCommand[] overrides)

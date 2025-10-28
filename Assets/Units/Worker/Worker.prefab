@@ -70,6 +70,7 @@ GameObject:
   - component: {fileID: 6850825408099389513}
   - component: {fileID: 6247014884995486581}
   - component: {fileID: 4494058938380112861}
+  - component: {fileID: 322099791673483493}
   m_Layer: 6
   m_Name: Worker
   m_TagString: Untagged
@@ -150,15 +151,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b21abd3fe72b224581e310d298ac533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <IsSelected>k__BackingField: 0
   <CurrentHealth>k__BackingField: 0
   <MaxHealth>k__BackingField: 0
   <AvailableCommands>k__BackingField:
   - {fileID: 11400000, guid: d857b084d5409964bbb5cd4f144bd83f, type: 2}
   - {fileID: 11400000, guid: 6ccbe5f5983da6e4484e5702a84c6f44, type: 2}
   - {fileID: 11400000, guid: ac6a920dd5a4920438e5a138375e17c1, type: 2}
+  - {fileID: 11400000, guid: 96206c9fb470bad4ea86261aacfdd53b, type: 2}
   - {fileID: 11400000, guid: 3c78ece3598fccf4aa0cd58e277807ea, type: 2}
   <UnitSO>k__BackingField: {fileID: 11400000, guid: 6b96ca183cbf23b4e87dc3bce84fbf13, type: 2}
   decal: {fileID: 7808055611623895356}
+  damageableSensor: {fileID: 0}
   cancelBuildingCommand: {fileID: 11400000, guid: d767f477825a34c418501e63cbccb6f0, type: 2}
 --- !u!136 &6247014884995486581
 CapsuleCollider:
@@ -198,6 +202,7 @@ MonoBehaviour:
   m_Graph: {fileID: 4141745344626342387, guid: 63130bc77ad7eff45aebbb333a2ee647, type: 2}
   m_BlackboardVariableOverridesList:
   - rid: 1157207640263099333
+  m_OriginalGraph: {fileID: 0}
   m_IsInitialised: 0
   m_IsStarted: 0
   references:
@@ -211,6 +216,33 @@ MonoBehaviour:
           m_Value1: 0
         Name: Self
         m_Value: {fileID: 6510919576379171628}
+--- !u!54 &322099791673483493
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6510919576379171628}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &6023479588184438867
 PrefabInstance:
   m_ObjectHideFlags: 0

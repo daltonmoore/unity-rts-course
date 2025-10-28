@@ -18,3 +18,4 @@ MonoBehaviour:
   <BuildTime>k__BackingField: 5
   <Icon>k__BackingField: {fileID: 21300000, guid: 6e40afd6361ffe44a87846d98dd04e7c, type: 3}
   <Cost>k__BackingField: {fileID: 11400000, guid: 887af31905b78bb4c8a9544296c55d70, type: 2}
+  <AttackConfig>k__BackingField: {fileID: 11400000, guid: 0f63ce171ec32ac4daf806d77248784b, type: 2}

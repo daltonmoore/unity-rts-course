@@ -9,6 +9,7 @@ namespace Units
 		Move,
 		Gather,
 		ReturnSupplies,
-		BuildBuilding
+		BuildBuilding,
+		Attack
 	}
 }

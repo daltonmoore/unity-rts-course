@@ -304,7 +304,7 @@ namespace Player
             }
             else if (_activeCommand is not null 
                      && !EventSystem.current.IsPointerOverGameObject()
-                     && Physics.Raycast(ray, out hit, float.MaxValue, interactableLayers | floorLayers))
+                     && Physics.Raycast(ray, out hit, float.MaxValue, selectableUnitsLayers | interactableLayers | floorLayers))
             {
                 ActivateCommand(hit);
             }
