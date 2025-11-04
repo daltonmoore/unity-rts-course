@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Units;
 using Unity.Behavior;
 using Unity.Properties;
@@ -16,10 +17,12 @@ namespace Behavior
         [SerializeReference] public BlackboardVariable<GameObject> Self;
         [SerializeReference] public BlackboardVariable<GameObject> Target;
         [SerializeReference] public BlackboardVariable<AttackConfigSO> AttackConfig;
+        [SerializeReference] public BlackboardVariable<List<GameObject>> NearbyEnemies;
         
         private NavMeshAgent _agent;
         private Transform _selfTransform;
         private Animator _animator;
+        private AbstractUnit _unit;
         
         private IDamageable _targetDamageable;
         private Transform _targetTransform;
@@ -33,13 +36,19 @@ namespace Behavior
             _selfTransform = Self.Value.transform;
             _agent = Self.Value.GetComponent<NavMeshAgent>();
             _animator = Self.Value.GetComponent<Animator>();
+            _unit = Self.Value.GetComponent<AbstractUnit>();
 
             _targetDamageable = Target.Value.GetComponent<IDamageable>();
             _targetTransform = Target.Value.transform;
 
-            if (_animator != null)
+            if (!NearbyEnemies.Value.Contains(Target.Value))
             {
-                _animator.SetBool(AnimationConstants.ATTACK, true);
+                _agent.SetDestination(_targetTransform.position);
+                _agent.isStopped = false;
+                if (_animator != null)
+                {
+                    _animator.SetBool(AnimationConstants.ATTACK, false);
+                }
             }
 
             return Status.Running;
@@ -48,19 +57,41 @@ namespace Behavior
         protected override Status OnUpdate()
         {
             if (Target.Value == null || _targetDamageable.CurrentHealth == 0) return Status.Success;
-            
-            if (Vector3.Distance(_targetTransform.position, _selfTransform.position) >= AttackConfig.Value.AttackRange)
+
+            if (_animator != null)
             {
-                _agent.SetDestination(_targetTransform.position);
-                _agent.isStopped = false;
+                _animator.SetFloat(AnimationConstants.SPEED, _agent.velocity.magnitude);
+            }
+            
+            if (!NearbyEnemies.Value.Contains(Target.Value))
+            {
                 return Status.Running;
             }
             
             _agent.isStopped = true;
+            
+            Quaternion lookRotation = Quaternion.LookRotation(
+                (_targetTransform.position - _selfTransform.position).normalized,
+                Vector3.up
+            );
+            _selfTransform.rotation = Quaternion.Euler(
+                _selfTransform.rotation.eulerAngles.x, 
+                lookRotation.eulerAngles.y, 
+                _selfTransform.rotation.eulerAngles.z
+            );
+            
+            if (_animator != null)
+            {
+                _animator.SetBool(AnimationConstants.ATTACK, true);
+            }
 
             if (Time.time >= _lastAttackTime + AttackConfig.Value.AttackDelay)
             {
                 _lastAttackTime = Time.time;
+                if (_unit.AttackingParticleSystem != null)
+                {
+                    _unit.AttackingParticleSystem.Play();
+                }
                 _targetDamageable.TakeDamage(AttackConfig.Value.Damage);
             }
             
@@ -72,14 +103,17 @@ namespace Behavior
             if (_animator != null)
             {
                 _animator.SetBool(AnimationConstants.ATTACK, false);
+                _animator.SetFloat(AnimationConstants.SPEED, 0);
             }
         }
         
         private bool HasValidInputs() => Self.Value != null 
+                                         && Self.Value.TryGetComponent(out AbstractUnit _)
                                          && Self.Value.TryGetComponent(out NavMeshAgent _) 
                                          && Target.Value != null 
                                          && Target.Value.TryGetComponent(out IDamageable _)
-                                         && AttackConfig.Value != null;
+                                         && AttackConfig.Value != null
+                                         && NearbyEnemies.Value != null;
     }
 }
 

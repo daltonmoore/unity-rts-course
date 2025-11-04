@@ -38,6 +38,7 @@ namespace Behavior
             }
 
             _agent.SetDestination(TargetLocation.Value);
+            _agent.isStopped = false;
         
             return Status.Running;
         }

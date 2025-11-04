@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EventBus;
+using Events;
 using UnityEngine;
 
 namespace Units
@@ -28,6 +30,11 @@ namespace Units
             if (!other.TryGetComponent(out IDamageable damageable)) return;
             _damageables.Add(damageable);
             OnUnitEnter?.Invoke(damageable);
+
+            if (_damageables.Count == 1)
+            {
+                Bus<UnitDeathEvent>.OnEvent += HandleUnitDeath;
+            }
         }
 
         private void OnTriggerExit(Collider other)
@@ -35,11 +42,29 @@ namespace Units
             if (!other.TryGetComponent(out IDamageable damageable)) return;
             _damageables.Remove(damageable);
             OnUnitExit?.Invoke(damageable);
+            
+            if (_damageables.Count == 0)
+            {
+                Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
         }
 
         public void SetupFrom(AttackConfigSO attackConfig)
         {
             _collider.radius = attackConfig.AttackRange;
+        }
+        
+        private void HandleUnitDeath(UnitDeathEvent evt)
+        {
+            if (_damageables.Remove(evt.Unit))
+            {
+                OnTriggerExit(evt.Unit.GetComponent<Collider>());
+            }
         }
     }
 }
