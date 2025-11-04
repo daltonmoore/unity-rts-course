@@ -38,21 +38,23 @@ namespace Units
             grenade.transform.SetParent(null);
             Vector3 startPosition = grenade.transform.position;
             Vector3 endPosition = startPosition + transform.forward * 10;
+            IDamageable damageable = null;
 
             if (GraphAgent.GetVariable("TargetGameObject", out BlackboardVariable<GameObject> target)
                 && target != null)
             {
                 endPosition = target.Value.transform.position + Vector3.up;
+                damageable = target.Value.GetComponent<IDamageable>();
             }
             else if (GraphAgent.GetVariable("TargetLocation", out BlackboardVariable<Vector3> targetLocation))
             {
                 endPosition = targetLocation;
             }
             
-            StartCoroutine(AnimateGrenadeMovement(startPosition, endPosition));
+            StartCoroutine(AnimateGrenadeMovement(startPosition, endPosition, damageable));
         }
 
-        private IEnumerator AnimateGrenadeMovement(Vector3 startPosition, Vector3 endPosition)
+        private IEnumerator AnimateGrenadeMovement(Vector3 startPosition, Vector3 endPosition, IDamageable damageable)
         {
             float time = 0;
             const float speed = 2;
@@ -62,6 +64,8 @@ namespace Units
                 time += Time.deltaTime * speed;
                 yield return null;
             }
+            
+            damageable?.TakeDamage(_unitSO.AttackConfig.Damage);
             
             explosionParticles.transform.SetParent(null);
             explosionParticles.transform.position = endPosition;

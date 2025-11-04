@@ -92,7 +92,12 @@ namespace Behavior
                 {
                     _unit.AttackingParticleSystem.Play();
                 }
-                _targetDamageable.TakeDamage(AttackConfig.Value.Damage);
+
+                if (!AttackConfig.Value.HasProjectileAttacks)
+                {
+                    _targetDamageable.TakeDamage(AttackConfig.Value.Damage);
+                    // projectile attacks are handled by the specific subclass of AbstractUnit that shoot the projectile
+                }
             }
             
             return Status.Running;
