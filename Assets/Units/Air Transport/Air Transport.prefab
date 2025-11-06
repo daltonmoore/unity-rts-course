@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 1974153333601261373}
   - component: {fileID: 6373942607041070935}
   - component: {fileID: 4998999097916986450}
-  - component: {fileID: 6165795690068258123}
   - component: {fileID: 2115234063178354583}
+  - component: {fileID: 342708985662147062}
   m_Layer: 6
   m_Name: Air Transport
   m_TagString: Untagged
@@ -133,23 +133,6 @@ CapsuleCollider:
   m_Height: 3
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &6165795690068258123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1076983579694789324}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b21abd3fe72b224581e310d298ac533, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <CurrentHealth>k__BackingField: 0
-  <MaxHealth>k__BackingField: 0
-  <AvailableCommands>k__BackingField: []
-  <UnitSO>k__BackingField: {fileID: 11400000, guid: df94b76c757e9dd4cade405dab0bf3ee, type: 2}
-  decal: {fileID: 5553413900278090067}
 --- !u!114 &2115234063178354583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,13 +145,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Graph: {fileID: 0}
-  m_BlackboardVariableOverridesList: []
+  m_Graph: {fileID: 4706468047072318598, guid: 0382a871a6cea0641a78bce4066e61e4, type: 2}
+  m_BlackboardVariableOverridesList:
+  - rid: 7762887590245040268
+  m_OriginalGraph: {fileID: 4706468047072318598, guid: 0382a871a6cea0641a78bce4066e61e4, type: 2}
   m_IsInitialised: 0
   m_IsStarted: 0
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 7762887590245040268
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 1076983579694789324}
+--- !u!114 &342708985662147062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1076983579694789324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f8d53cde13673479ce8ba602ca695e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsSelected>k__BackingField: 0
+  <CurrentHealth>k__BackingField: 0
+  <MaxHealth>k__BackingField: 0
+  <AvailableCommands>k__BackingField:
+  - {fileID: 11400000, guid: 6ccbe5f5983da6e4484e5702a84c6f44, type: 2}
+  - {fileID: 11400000, guid: ac6a920dd5a4920438e5a138375e17c1, type: 2}
+  <UnitSO>k__BackingField: {fileID: 11400000, guid: df94b76c757e9dd4cade405dab0bf3ee, type: 2}
+  decal: {fileID: 5553413900278090067}
+  <AttackingParticleSystem>k__BackingField: {fileID: 0}
+  damageableSensor: {fileID: 0}
 --- !u!1 &9073600892808302307
 GameObject:
   m_ObjectHideFlags: 0

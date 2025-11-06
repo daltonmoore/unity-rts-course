@@ -28,6 +28,7 @@ namespace Behavior
         private Transform _targetTransform;
 
         private float _lastAttackTime;
+        private Collider[] _splashHits;
 
         protected override Status OnStart()
         {
@@ -40,6 +41,11 @@ namespace Behavior
 
             _targetDamageable = Target.Value.GetComponent<IDamageable>();
             _targetTransform = Target.Value.transform;
+
+            if (AttackConfig.Value.IsAreaOfEffect)
+            {
+                _splashHits = new Collider[AttackConfig.Value.MaxEnemiesHitPerAttack];
+            }
 
             if (!NearbyEnemies.Value.Contains(Target.Value))
             {
@@ -70,16 +76,8 @@ namespace Behavior
             
             _agent.isStopped = true;
             
-            Quaternion lookRotation = Quaternion.LookRotation(
-                (_targetTransform.position - _selfTransform.position).normalized,
-                Vector3.up
-            );
-            _selfTransform.rotation = Quaternion.Euler(
-                _selfTransform.rotation.eulerAngles.x, 
-                lookRotation.eulerAngles.y, 
-                _selfTransform.rotation.eulerAngles.z
-            );
-            
+            LookAtTarget();
+
             if (_animator != null)
             {
                 _animator.SetBool(AnimationConstants.ATTACK, true);
@@ -87,17 +85,7 @@ namespace Behavior
 
             if (Time.time >= _lastAttackTime + AttackConfig.Value.AttackDelay)
             {
-                _lastAttackTime = Time.time;
-                if (_unit.AttackingParticleSystem != null)
-                {
-                    _unit.AttackingParticleSystem.Play();
-                }
-
-                if (!AttackConfig.Value.HasProjectileAttacks)
-                {
-                    _targetDamageable.TakeDamage(AttackConfig.Value.Damage);
-                    // projectile attacks are handled by the specific subclass of AbstractUnit that shoot the projectile
-                }
+                ApplyDamage();
             }
             
             return Status.Running;
@@ -109,6 +97,48 @@ namespace Behavior
             {
                 _animator.SetBool(AnimationConstants.ATTACK, false);
                 _animator.SetFloat(AnimationConstants.SPEED, 0);
+            }
+        }
+        
+        private void LookAtTarget()
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(
+                (_targetTransform.position - _selfTransform.position).normalized,
+                Vector3.up
+            );
+            _selfTransform.rotation = Quaternion.Euler(
+                _selfTransform.rotation.eulerAngles.x, 
+                lookRotation.eulerAngles.y, 
+                _selfTransform.rotation.eulerAngles.z
+            );
+        }
+        
+        private void ApplyDamage()
+        {
+            _lastAttackTime = Time.time;
+            if (_unit.AttackingParticleSystem != null)
+            {
+                _unit.AttackingParticleSystem.Play();
+            }
+            
+            // projectile attacks are handled by the specific subclass of AbstractUnit that shoot the projectile
+            if (AttackConfig.Value.HasProjectileAttacks) return;
+            
+            _targetDamageable.TakeDamage(AttackConfig.Value.Damage);
+
+            if (!AttackConfig.Value.IsAreaOfEffect) return;
+            
+            int writes = Physics.OverlapSphereNonAlloc(_targetTransform.position, AttackConfig.Value.AreaEffectRadius,
+                _splashHits, AttackConfig.Value.DamageableLayers);
+            for (int i = 0; i < writes; i++)
+            {
+                if (_splashHits[i].TryGetComponent(out IDamageable nearbyDamageable) 
+                    && _targetDamageable != nearbyDamageable)
+                {
+                    nearbyDamageable.TakeDamage(
+                        AttackConfig.Value.CalculateAreaOfEffectDamage(_targetTransform.position,
+                            nearbyDamageable.Transform.position));
+                }
             }
         }
         

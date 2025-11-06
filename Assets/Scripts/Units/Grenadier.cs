@@ -11,6 +11,7 @@ namespace Units
         
         private Transform _grenadeParent;
         private Vector3 _defaultGrenadePosition;
+        private Collider[] _splashHits;
 
         protected override void Awake()
         {
@@ -23,6 +24,12 @@ namespace Units
 
             _defaultGrenadePosition = grenade.transform.localPosition;
             _grenadeParent = grenade.transform.parent;
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+            _splashHits = new Collider[_unitSO.AttackConfig.MaxEnemiesHitPerAttack];
         }
 
         protected override void OnDestroy()
@@ -65,14 +72,35 @@ namespace Units
                 yield return null;
             }
             
-            damageable?.TakeDamage(_unitSO.AttackConfig.Damage);
-            
+            ApplyDamage(endPosition, damageable);
+
             explosionParticles.transform.SetParent(null);
             explosionParticles.transform.position = endPosition;
             explosionParticles.Play();
 
             grenade.transform.SetParent(_grenadeParent);
             grenade.transform.localPosition = _defaultGrenadePosition;
+        }
+
+        private void ApplyDamage(Vector3 endPosition, IDamageable damageable)
+        {
+            damageable?.TakeDamage(_unitSO.AttackConfig.Damage);
+
+            if (_unitSO.AttackConfig.IsAreaOfEffect)
+            {
+                int writes = Physics.OverlapSphereNonAlloc(endPosition, _unitSO.AttackConfig.AreaEffectRadius,
+                    _splashHits, _unitSO.AttackConfig.DamageableLayers);
+                for (int i = 0; i < writes; i++)
+                {
+                    if (_splashHits[i].TryGetComponent(out IDamageable nearbyDamageable) 
+                        && damageable != nearbyDamageable)
+                    {
+                        nearbyDamageable.TakeDamage(
+                            _unitSO.AttackConfig.CalculateAreaOfEffectDamage(endPosition,
+                                nearbyDamageable.Transform.position));
+                    }
+                }
+            }
         }
     }
 }
