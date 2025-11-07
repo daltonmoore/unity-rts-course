@@ -10,6 +10,7 @@ namespace Units
 		Gather,
 		ReturnSupplies,
 		BuildBuilding,
-		Attack
+		Attack,
+		LoadUnits
 	}
 }

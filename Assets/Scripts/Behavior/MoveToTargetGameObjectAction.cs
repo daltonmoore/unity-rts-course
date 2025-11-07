@@ -14,9 +14,11 @@ namespace Behavior
     {
         [SerializeReference] public BlackboardVariable<GameObject> Agent;
         [SerializeReference] public BlackboardVariable<GameObject> TargetGameObject;
+        [SerializeReference] public BlackboardVariable<float> MoveThreshold = new(0.25f);
 
         private NavMeshAgent _agent;
         private Animator _animator;
+        private Vector3 _lastPosition;
         
         protected override Status OnStart()
         {
@@ -27,14 +29,15 @@ namespace Behavior
             
             _agent.TryGetComponent(out _animator);
 
-            Vector3 destination = GetDestination();
+            Vector3 targetPosition = GetTargetPosition();
             
-            if (Vector3.Distance(_agent.transform.position, destination) <= _agent.stoppingDistance)
+            if (Vector3.Distance(_agent.transform.position, targetPosition) <= _agent.stoppingDistance)
             {
                 return Status.Success;       
             }
 
-            _agent.SetDestination(destination);
+            _agent.SetDestination(targetPosition);
+            _lastPosition = targetPosition;
             
             return Status.Running;
         }
@@ -44,6 +47,14 @@ namespace Behavior
             if (_animator != null)
             {
                 _animator.SetFloat(AnimationConstants.SPEED, _agent.velocity.magnitude);
+            }
+
+            Vector3 targetPosition = GetTargetPosition();
+            if (Vector3.Distance(targetPosition, _lastPosition) >= MoveThreshold.Value)
+            {
+                _agent.SetDestination(targetPosition);
+                _lastPosition = targetPosition;
+                return Status.Running;
             }
             
             if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
@@ -62,19 +73,19 @@ namespace Behavior
             }
         }
 
-        private Vector3 GetDestination()
+        private Vector3 GetTargetPosition()
         {
-            Vector3 destination;
+            Vector3 targetPosition;
             if (TargetGameObject.Value.TryGetComponent(out Collider collider))
             {
-                destination = collider.ClosestPoint(_agent.transform.position);
+                targetPosition = collider.ClosestPoint(_agent.transform.position);
             }
             else
             {
-                destination = TargetGameObject.Value.transform.position;
+                targetPosition = TargetGameObject.Value.transform.position;
             }
 
-            return destination;
+            return targetPosition;
         }
     }
 }

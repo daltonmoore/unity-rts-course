@@ -10,8 +10,10 @@ using Utilities;
 
 namespace Units
 {
-    public class Worker : AbstractUnit, IBuildingBuilder
+    public class Worker : AbstractUnit, IBuildingBuilder, ITransportable
     {
+        public int TransportCapacityUsage => _unitSO.TransportConfig.GetTransportCapacityUsage();
+        
         public bool IsBuilding => GraphAgent.GetVariable("Command", out BlackboardVariable<UnitCommands> command) 
                                   && command.Value == UnitCommands.BuildBuilding;
         public bool HasSupplies {
@@ -46,6 +48,11 @@ namespace Units
             
         }
 
+        public void LoadInto(ITransporter transporter)
+        {
+            throw new System.NotImplementedException();
+        }
+        
         public void Gather(GatherableSupply supply)
         {
             GraphAgent.SetVariableValue("GatherableSupply", supply);
