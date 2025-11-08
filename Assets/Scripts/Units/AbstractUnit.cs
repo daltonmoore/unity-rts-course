@@ -16,9 +16,9 @@ namespace Units
         
         [field: SerializeField] public ParticleSystem AttackingParticleSystem { get; private set; }
         [SerializeField] private DamageableSensor damageableSensor;
-        
+        public NavMeshAgent Agent { get; private set; }
+
         protected BehaviorGraphAgent GraphAgent;
-        protected NavMeshAgent Agent;
         protected Animator Animator;
         protected UnitSO _unitSO;
 
@@ -52,6 +52,14 @@ namespace Units
         {
             SetCommandOverrides(null);
             GraphAgent.SetVariableValue("TargetLocation", position);
+            GraphAgent.SetVariableValue<GameObject>("TargetGameObject", null);
+            GraphAgent.SetVariableValue("Command", UnitCommands.Move);
+        }
+        
+        public void MoveTo(Transform transform)
+        {
+            SetCommandOverrides(null);
+            GraphAgent.SetVariableValue("TargetGameObject", transform.gameObject);
             GraphAgent.SetVariableValue("Command", UnitCommands.Move);
         }
 

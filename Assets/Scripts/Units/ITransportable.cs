@@ -1,5 +1,6 @@
 using Units;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Units
 {
@@ -7,6 +8,7 @@ namespace Units
     {
         Transform Transform { get; }
         public int TransportCapacityUsage { get; }
+        public NavMeshAgent Agent { get; }
         
         public void LoadInto(ITransporter transporter);
     }

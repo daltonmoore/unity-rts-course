@@ -181,10 +181,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6ccbe5f5983da6e4484e5702a84c6f44, type: 2}
   - {fileID: 11400000, guid: ac6a920dd5a4920438e5a138375e17c1, type: 2}
   - {fileID: 11400000, guid: cfb4b0b2706c66046994775f6b24ca01, type: 2}
+  - {fileID: 11400000, guid: 6b324ce98d44ae84e8a423d6c242d661, type: 2}
   <UnitSO>k__BackingField: {fileID: 11400000, guid: df94b76c757e9dd4cade405dab0bf3ee, type: 2}
   decal: {fileID: 5553413900278090067}
   <AttackingParticleSystem>k__BackingField: {fileID: 0}
   damageableSensor: {fileID: 0}
+  <UsedCapacity>k__BackingField: 0
+  <MaxUnloadDistance>k__BackingField: 1
 --- !u!1 &9073600892808302307
 GameObject:
   m_ObjectHideFlags: 0
