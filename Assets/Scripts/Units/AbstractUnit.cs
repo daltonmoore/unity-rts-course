@@ -17,7 +17,7 @@ namespace Units
         [field: SerializeField] public ParticleSystem AttackingParticleSystem { get; private set; }
         [SerializeField] private DamageableSensor damageableSensor;
         public NavMeshAgent Agent { get; private set; }
-
+        public Sprite Icon => UnitSO.Icon;
         protected BehaviorGraphAgent GraphAgent;
         protected Animator Animator;
         protected UnitSO _unitSO;
