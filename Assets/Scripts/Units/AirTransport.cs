@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Behavior;
+using EventBus;
+using Events;
 using Unity.Behavior;
 using UnityEngine;
 using UnityEngine.AI;
@@ -38,6 +40,7 @@ namespace Units
             UsedCapacity += transportable.TransportCapacityUsage;
             
             _loadedUnits.Add(transportable);
+            Bus<UnitLoadEvent>.Raise(new UnitLoadEvent(transportable, this));
             
             if (GraphAgent.GetVariable("LoadUnitTargets", out BlackboardVariable<List<GameObject>> loadUnitTargets))
             {
@@ -52,8 +55,6 @@ namespace Units
                     new List<GameObject>(_unitSO.TransportConfig.Capacity));
             }
         }
-
-
 
         public void Load(ITransportable unit)
         {
@@ -101,6 +102,7 @@ namespace Units
                 }
                 
                 _loadedUnits.Remove(unit);
+                Bus<UnitUnloadEvent>.Raise(new UnitUnloadEvent(unit, this));
                 return true;
             }
             

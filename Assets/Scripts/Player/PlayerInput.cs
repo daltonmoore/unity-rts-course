@@ -189,6 +189,8 @@ namespace Player
 
             foreach (AbstractUnit unit in _aliveUnits)
             {
+                if (!unit.gameObject.activeInHierarchy) continue;
+                
                 Vector2 unitPosition = camera.WorldToScreenPoint(unit.transform.position);
                 if (selectionBoxBounds.Contains(unitPosition))
                 {

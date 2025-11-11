@@ -28,7 +28,9 @@ namespace UI
             Bus<UnitSelectedEvent>.OnEvent += HandleUnitSelected;
             Bus<UnitDeselectedEvent>.OnEvent += HandleUnitDeselected;
             Bus<UnitDeathEvent>.OnEvent += HandleUnitDeath;
-            Bus<SupplyEvent>.OnEvent += HandleSupplyEvent;
+            Bus<SupplyEvent>.OnEvent += HandleSupplyChange;
+            Bus<UnitLoadEvent>.OnEvent += HandleLoadUnit;
+            Bus<UnitUnloadEvent>.OnEvent += HandleUnloadUnit;
         }
 
         private void Start()
@@ -45,10 +47,33 @@ namespace UI
             Bus<UnitSelectedEvent>.OnEvent -= HandleUnitSelected;
             Bus<UnitDeselectedEvent>.OnEvent -= HandleUnitDeselected;
             Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
-            Bus<SupplyEvent>.OnEvent -= HandleSupplyEvent;
+            Bus<SupplyEvent>.OnEvent -= HandleSupplyChange;
+            Bus<UnitLoadEvent>.OnEvent -= HandleLoadUnit;
+            Bus<UnitUnloadEvent>.OnEvent -= HandleUnloadUnit;
         }
         
-        private void HandleSupplyEvent(SupplyEvent evt)
+        private void HandleLoadUnit(UnitLoadEvent evt)
+        {
+            if (_commandables.Count == 1 && _commandables.First() is ITransporter)
+            {
+                RefreshUI();
+            }
+            else if (evt.Transportable is AbstractCommandable commandable && _commandables.Contains(commandable))
+            {
+                commandable.Deselect(); // RefreshUI will be called because of the UnitDeselectedEvent raised from this.
+            }
+        }
+        
+        private void HandleUnloadUnit(UnitUnloadEvent evt)
+        {
+
+            if (_commandables.Count == 1 && _commandables.First() is ITransporter)
+            {
+                RefreshUI();
+            }
+        }
+        
+        private void HandleSupplyChange(SupplyEvent evt)
         {
             actionsUI.EnableFor(_commandables);
         }

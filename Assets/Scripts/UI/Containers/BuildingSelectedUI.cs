@@ -39,7 +39,6 @@ namespace UI.Containers
         {
             buildingUnderConstructionUI.Disable();
             buildingBuildingUI.Disable();
-            singleUnitSelectedUI.Disable();
             Bus<BuildingSpawnEvent>.OnEvent -= HandleBuildingSpawned;
             if (_selectedBuilding != null)
             { 

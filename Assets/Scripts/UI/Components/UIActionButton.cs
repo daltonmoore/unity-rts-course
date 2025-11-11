@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Commands;
 using Units;
 using UnityEngine;
@@ -8,7 +10,7 @@ using UnityEngine.UI;
 namespace UI.Components
 {
     [RequireComponent(typeof(Button))]
-    public class UIActionButton : MonoBehaviour, IUIElement<BaseCommand, UnityAction>, IPointerEnterHandler, IPointerExitHandler
+    public class UIActionButton : MonoBehaviour, IUIElement<BaseCommand, IEnumerable<AbstractCommandable>, UnityAction>, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private Image icon;
         [SerializeField] private Tooltip tooltip;
@@ -24,11 +26,12 @@ namespace UI.Components
             Disable();
         }
 
-        public void EnableFor(BaseCommand command, UnityAction onClick)
+        public void EnableFor(BaseCommand command, IEnumerable<AbstractCommandable> selectedUnits, UnityAction onClick)
         {
             _button.onClick.RemoveAllListeners();
             SetIcon(command.Icon);
-            _button.interactable = !command.IsLocked(new CommandContext());
+            _button.interactable = selectedUnits
+                .Any(u => !command.IsLocked(new CommandContext(u, new RaycastHit())));
             _button.onClick.AddListener(onClick);
             _isActive = true;
             

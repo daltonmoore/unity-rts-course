@@ -29,13 +29,13 @@ namespace UI.Containers
         
         private void RefreshButtons(HashSet<AbstractCommandable> selectedUnits)
         {
-            HashSet<BaseCommand> availableCommands = new (9);
+            IEnumerable<BaseCommand> availableCommands = selectedUnits.ElementAt(0).AvailableCommands;
 
             foreach (AbstractCommandable commandable in selectedUnits)
             {
                 if (commandable.AvailableCommands != null)
                 {
-                    availableCommands.UnionWith(commandable.AvailableCommands);
+                    availableCommands = availableCommands.Intersect(commandable.AvailableCommands);
                 }
             }
 
@@ -45,7 +45,7 @@ namespace UI.Containers
 
                 if (commandForSlot is not null)
                 {
-                    actionButtons[i].EnableFor(commandForSlot, HandleClick(commandForSlot));
+                    actionButtons[i].EnableFor(commandForSlot, selectedUnits, HandleClick(commandForSlot));
                 }
                 else
                 {

@@ -20,7 +20,10 @@ namespace Commands
             
             transporter.Load(transportable);
         }
-        
-        public override bool IsLocked(CommandContext context) => false;
+
+        public override bool IsLocked(CommandContext context)
+        {
+            return context.Commandable is not ITransporter transporter || transporter.UsedCapacity >= transporter.Capacity;
+        }
     }
 }
