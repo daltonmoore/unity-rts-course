@@ -31,7 +31,7 @@ namespace UI.Containers
                 buildingUnderConstructionUI.EnableFor(building);
                 buildingBuildingUI.Disable();
                 singleUnitSelectedUI.Disable();
-                // Bus<BuildingSpawnEvent>.OnEvent += HandleBuildingSpawned;
+                Bus<BuildingSpawnEvent>.OnEvent[Owner.Player1] += HandleBuildingSpawned;
             }
         }
 
@@ -39,7 +39,7 @@ namespace UI.Containers
         {
             buildingUnderConstructionUI.Disable();
             buildingBuildingUI.Disable();
-            // Bus<BuildingSpawnEvent>.OnEvent -= HandleBuildingSpawned;
+            Bus<BuildingSpawnEvent>.OnEvent[Owner.Player1] -= HandleBuildingSpawned;
             if (_selectedBuilding != null)
             { 
                 _selectedBuilding.OnQueueUpdated -= OnBuildingQueueUpdated;
@@ -65,7 +65,7 @@ namespace UI.Containers
         {
             if (evt.Building == _selectedBuilding)
             {
-                // Bus<BuildingSpawnEvent>.OnEvent -= HandleBuildingSpawned;
+                Bus<BuildingSpawnEvent>.OnEvent[Owner.Player1] -= HandleBuildingSpawned;
                 OnBuildingQueueUpdated();
                 buildingUnderConstructionUI.Disable();
             }

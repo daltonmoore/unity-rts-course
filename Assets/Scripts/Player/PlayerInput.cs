@@ -64,20 +64,20 @@ namespace Player
             // Cursor.lockState = CursorLockMode.Confined;
             Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
             
-            // Bus<UnitSelectedEvent>.OnEvent += HandleUnitSelected;
-            // Bus<UnitDeselectedEvent>.OnEvent += HandleUnitDeselected;
-            // Bus<UnitSpawnEvent>.OnEvent += HandleUnitSpawn;
-            // Bus<CommandSelectedEvent>.OnEvent += HandleCommandSelected;
-            // Bus<UnitDeathEvent>.OnEvent += HandleUnitDeath;
+            Bus<UnitSelectedEvent>.OnEvent[Owner.Player1] += HandleUnitSelected;
+            Bus<UnitDeselectedEvent>.OnEvent[Owner.Player1] += HandleUnitDeselected;
+            Bus<UnitSpawnEvent>.OnEvent[Owner.Player1] += HandleUnitSpawn;
+            Bus<CommandSelectedEvent>.OnEvent[Owner.Player1] += HandleCommandSelected;
+            Bus<UnitDeathEvent>.OnEvent[Owner.Player1] += HandleUnitDeath;
         }
 
         private void OnDestroy()
         {
-            // Bus<UnitSelectedEvent>.OnEvent -= HandleUnitSelected;
-            // Bus<UnitDeselectedEvent>.OnEvent -= HandleUnitDeselected;
-            // Bus<UnitSpawnEvent>.OnEvent -= HandleUnitSpawn;
-            // Bus<CommandSelectedEvent>.OnEvent -= HandleCommandSelected;
-            // Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
+            Bus<UnitSelectedEvent>.OnEvent[Owner.Player1] -= HandleUnitSelected;
+            Bus<UnitDeselectedEvent>.OnEvent[Owner.Player1] -= HandleUnitDeselected;
+            Bus<UnitSpawnEvent>.OnEvent[Owner.Player1] -= HandleUnitSpawn;
+            Bus<CommandSelectedEvent>.OnEvent[Owner.Player1] -= HandleCommandSelected;
+            Bus<UnitDeathEvent>.OnEvent[Owner.Player1] -= HandleUnitDeath;
         }
 
         private void Update()

@@ -56,8 +56,7 @@ namespace UI.Containers
 
         private UnityAction HandleClick(BaseCommand action)
         {
-            return null;
-            // return () => Bus<CommandSelectedEvent>.Raise(new CommandSelectedEvent(action));
+            return () => Bus<CommandSelectedEvent>.Raise(Owner.Player1, new CommandSelectedEvent(action));
         }
     }
 }
