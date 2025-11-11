@@ -12,7 +12,8 @@ namespace Units
         [field: SerializeField] public bool IsSelected { get; protected set; }
         [field: SerializeField] public int CurrentHealth { get; protected set; }
         public Transform Transform  => transform;
-
+        
+        [field: SerializeField] public Owner Owner { get; set; }
         [field: SerializeField] public int MaxHealth { get; protected set; }
         [field: SerializeField] public BaseCommand[] AvailableCommands { get; private set; }
         [field: SerializeField] public AbstractUnitSO UnitSO { get; private set; }

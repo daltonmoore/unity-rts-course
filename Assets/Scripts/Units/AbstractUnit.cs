@@ -28,6 +28,7 @@ namespace Units
             Animator = GetComponent<Animator>();
             GraphAgent = GetComponent<BehaviorGraphAgent>();
             _unitSO = UnitSO as UnitSO;
+            
             GraphAgent.SetVariableValue("Command", UnitCommands.Stop);
             GraphAgent.SetVariableValue("AttackConfig", _unitSO.AttackConfig);
             GraphAgent.SetVariableValue<GameObject>("TargetGameObject", null);
@@ -44,6 +45,7 @@ namespace Units
             {
                 damageableSensor.OnUnitEnter += HandleUnitEnter;
                 damageableSensor.OnUnitExit += HandleUnitExit;
+                damageableSensor.Owner = Owner;
                 damageableSensor.SetupFrom(_unitSO.AttackConfig);
             }
         }

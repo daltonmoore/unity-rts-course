@@ -109,6 +109,7 @@ namespace Units
         {
             Awake(); // Called here because this script is not enabled when the building is placed, so Awake won't be called yet.
             _unitBuildingThis = builder;
+            Owner = builder.Owner;
             MainRenderer.material = BuildingSO.PlacementMaterial;
             
             Progress = new BuildingProgress(
@@ -155,7 +156,12 @@ namespace Units
                 
                 yield return new WaitForSeconds(BuildingUnit.BuildTime);
                 
-                Instantiate(BuildingUnit.Prefab, transform.position, Quaternion.identity);
+                GameObject instance = Instantiate(BuildingUnit.Prefab, transform.position, Quaternion.identity);
+                if (instance.TryGetComponent(out AbstractCommandable commandable))
+                {
+                    commandable.Owner = Owner;
+                }
+                
                 _buildQueue.RemoveAt(0);
             }
             
