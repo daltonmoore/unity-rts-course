@@ -38,7 +38,7 @@ namespace Units
             }
             
             IsSelected = true;
-            Bus<UnitSelectedEvent>.Raise(new UnitSelectedEvent(this));
+            Bus<UnitSelectedEvent>.Raise(Owner, new UnitSelectedEvent(this));
         }
 
         public virtual void Deselect()
@@ -51,7 +51,7 @@ namespace Units
             IsSelected = false;
             SetCommandOverrides(null);
             
-            Bus<UnitDeselectedEvent>.Raise(new UnitDeselectedEvent(this));
+            Bus<UnitDeselectedEvent>.Raise(Owner, new UnitDeselectedEvent(this));
         }
         
         public void TakeDamage(int damage)
@@ -84,7 +84,7 @@ namespace Units
 
             if (IsSelected)
             {
-                Bus<UnitSelectedEvent>.Raise(new UnitSelectedEvent(this));
+                Bus<UnitSelectedEvent>.Raise(Owner, new UnitSelectedEvent(this));
             }
         }
 

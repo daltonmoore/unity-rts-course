@@ -82,8 +82,8 @@ namespace Units
             GraphAgent.SetVariableValue("Command", UnitCommands.BuildBuilding);
             
             SetCommandOverrides(new[] { cancelBuildingCommand });
-            Bus<SupplyEvent>.Raise(new SupplyEvent(-building.Cost.Minerals, building.Cost.MineralsSO));
-            Bus<SupplyEvent>.Raise(new SupplyEvent(-building.Cost.Gas, building.Cost.GasSO));
+            Bus<SupplyEvent>.Raise(Owner, new SupplyEvent(-building.Cost.Minerals, building.Cost.MineralsSO));
+            Bus<SupplyEvent>.Raise(Owner, new SupplyEvent(-building.Cost.Gas, building.Cost.GasSO));
             
             return instance;
         }
@@ -111,8 +111,8 @@ namespace Units
                 Destroy(building.Value.gameObject);
                 
                 BuildingSO buildingSO = building.Value.BuildingSO;
-                Bus<SupplyEvent>.Raise(new SupplyEvent(Mathf.FloorToInt(0.75f * buildingSO.Cost.Minerals), buildingSO.Cost.MineralsSO));
-                Bus<SupplyEvent>.Raise(new SupplyEvent(Mathf.FloorToInt(0.75f * buildingSO.Cost.Gas), buildingSO.Cost.GasSO));
+                Bus<SupplyEvent>.Raise(Owner, new SupplyEvent(Mathf.FloorToInt(0.75f * buildingSO.Cost.Minerals), buildingSO.Cost.MineralsSO));
+                Bus<SupplyEvent>.Raise(Owner, new SupplyEvent(Mathf.FloorToInt(0.75f * buildingSO.Cost.Gas), buildingSO.Cost.GasSO));
             }
             
             GraphAgent.SetVariableValue<BaseBuilding>("BuildingUnderConstruction", null);
@@ -134,12 +134,12 @@ namespace Units
                 SetCommandOverrides(null);
             }
             
-            Bus<UnitDeselectedEvent>.Raise(new UnitDeselectedEvent(this));
+            Bus<UnitDeselectedEvent>.Raise(Owner, new UnitDeselectedEvent(this));
         }
 
         private void HandleGatherSupplies(GameObject self, int amount, SupplySO supplySO)
         {
-            Bus<SupplyEvent>.Raise(new SupplyEvent(amount, supplySO));
+            Bus<SupplyEvent>.Raise(Owner, new SupplyEvent(amount, supplySO));
         }
         
         private void HandleBuildingEvent(GameObject self, BuildingEventType eventType, BaseBuilding building)

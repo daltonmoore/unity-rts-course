@@ -36,7 +36,7 @@ namespace Units
             
             if (_damageables.Count == 1)
             {
-                Bus<UnitDeathEvent>.OnEvent += HandleUnitDeath;
+                Bus<UnitDeathEvent>.RegisterForAll(HandleUnitDeath);
             }
         }
 
@@ -49,13 +49,13 @@ namespace Units
 
             if (_damageables.Count == 0)
             {
-                Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
+                Bus<UnitDeathEvent>.UnregisterForAll(HandleUnitDeath);
             }
         }
 
         private void OnDestroy()
         {
-            Bus<UnitDeathEvent>.OnEvent -= HandleUnitDeath;
+            Bus<UnitDeathEvent>.UnregisterForAll(HandleUnitDeath);
         }
 
         public void SetupFrom(AttackConfigSO attackConfig)

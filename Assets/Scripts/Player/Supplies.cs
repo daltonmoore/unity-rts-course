@@ -23,12 +23,12 @@ namespace Player
 
         private void Start()
         {
-            Bus<SupplyEvent>.OnEvent += HandleSupplyEvent;
+            // Bus<SupplyEvent>.OnEvent += HandleSupplyEvent;
         }
 
         private void OnDestroy()
         {
-            Bus<SupplyEvent>.OnEvent -= HandleSupplyEvent;
+            // Bus<SupplyEvent>.OnEvent -= HandleSupplyEvent;
         }
 
         private void HandleSupplyEvent(SupplyEvent args)

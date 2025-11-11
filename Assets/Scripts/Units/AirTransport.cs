@@ -40,7 +40,7 @@ namespace Units
             UsedCapacity += transportable.TransportCapacityUsage;
             
             _loadedUnits.Add(transportable);
-            Bus<UnitLoadEvent>.Raise(new UnitLoadEvent(transportable, this));
+            Bus<UnitLoadEvent>.Raise(Owner, new UnitLoadEvent(transportable, this));
             
             if (GraphAgent.GetVariable("LoadUnitTargets", out BlackboardVariable<List<GameObject>> loadUnitTargets))
             {
@@ -102,7 +102,7 @@ namespace Units
                 }
                 
                 _loadedUnits.Remove(unit);
-                Bus<UnitUnloadEvent>.Raise(new UnitUnloadEvent(unit, this));
+                Bus<UnitUnloadEvent>.Raise(Owner, new UnitUnloadEvent(unit, this));
                 return true;
             }
             
