@@ -135,7 +135,9 @@ MonoBehaviour:
   - rid: 1157207992503894307
   - rid: 1157207992503894348
   - rid: 1157207992503894767
-  m_VersionTimestamp: 638970366136786113
+  - rid: 7762887664487105154
+  - rid: 7762887664487105155
+  m_VersionTimestamp: 638984632182944670
   m_SerializedVersion: 1
   m_DebugInfo: {fileID: 3964442407641389249}
   m_RuntimeGraph: {fileID: 6402107558121691099}
@@ -276,6 +278,11 @@ MonoBehaviour:
       Type:
         m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
+      Tooltip: 
+    - Name: MoveThreshold
+      Type:
+        m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
       Tooltip: 
     NamedChildren: []
     IsPlaceholder: 0
@@ -631,6 +638,7 @@ MonoBehaviour:
         m_FieldValues:
         - rid: 1157207992503894138
         - rid: 1157207992503894139
+        - rid: 7762887664487105156
     - rid: 1157207992503894091
       type: {class: EventNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
       data:
@@ -1345,6 +1353,8 @@ MonoBehaviour:
         - rid: 1157207992503894257
         - rid: 1157207992503894258
         - rid: 1157207992503894259
+        - rid: 7762887664487105157
+        - rid: 7762887664487105158
         NodeType:
           m_SerializableType: Unity.Behavior.SwitchComposite, Unity.Behavior, Version=0.0.0.0,
             Culture=neutral, PublicKeyToken=null
@@ -1384,7 +1394,7 @@ MonoBehaviour:
     - rid: 1157207992503894249
       type: {class: FloatingPortNodeModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
       data:
-        Position: {x: 0.46746802, y: -11.93693}
+        Position: {x: -243.16995, y: -17.010357}
         ID:
           m_Value0: 7940708920294312200
           m_Value1: 3128067589525667814
@@ -1399,7 +1409,7 @@ MonoBehaviour:
     - rid: 1157207992503894250
       type: {class: FloatingPortNodeModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
       data:
-        Position: {x: 223.13446, y: -11.93693}
+        Position: {x: -50.50329, y: -17.010357}
         ID:
           m_Value0: 5117492983794462845
           m_Value1: 12923752348467397107
@@ -1414,7 +1424,7 @@ MonoBehaviour:
     - rid: 1157207992503894251
       type: {class: FloatingPortNodeModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
       data:
-        Position: {x: -436.1694, y: 53.123108}
+        Position: {x: -435.83664, y: -17.010357}
         ID:
           m_Value0: 6841294084700081776
           m_Value1: 9373277601997437955
@@ -1429,7 +1439,7 @@ MonoBehaviour:
     - rid: 1157207992503894252
       type: {class: FloatingPortNodeModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
       data:
-        Position: {x: -849.36975, y: 50.45641}
+        Position: {x: -628.50336, y: -17.010357}
         ID:
           m_Value0: 16731385748870656377
           m_Value1: 8345495000819253294
@@ -1444,7 +1454,7 @@ MonoBehaviour:
     - rid: 1157207992503894253
       type: {class: FloatingPortNodeModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
       data:
-        Position: {x: 415.8006, y: -11.93693}
+        Position: {x: 142.16339, y: -17.010357}
         ID:
           m_Value0: 5425215111105503612
           m_Value1: 12314322042989103547
@@ -2108,6 +2118,113 @@ MonoBehaviour:
         IsExposed: 1
         m_IsShared: 0
         m_Value: 0
+    - rid: 7762887664487105154
+      type: {class: FloatingPortNodeModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        Position: {x: -1013.83673, y: -17.010357}
+        ID:
+          m_Value0: 1013217720078464116
+          m_Value1: 8871666649098609235
+        Parents: []
+        PortModels:
+        - rid: 7762887664487105159
+        - rid: 7762887664487105160
+        ParentNodeID:
+          m_Value0: 5831351166468629427
+          m_Value1: 2062276245018931249
+        PortName: Attack
+    - rid: 7762887664487105155
+      type: {class: FloatingPortNodeModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        Position: {x: -821.17004, y: -17.010357}
+        ID:
+          m_Value0: 3536025218991269602
+          m_Value1: 4878506541062780791
+        Parents: []
+        PortModels:
+        - rid: 7762887664487105161
+        - rid: 7762887664487105162
+        ParentNodeID:
+          m_Value0: 5831351166468629427
+          m_Value1: 2062276245018931249
+        PortName: LoadUnits
+    - rid: 7762887664487105156
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: MoveThreshold
+        Type:
+          m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        LocalValue:
+          rid: 7762887664487105163
+        LinkedVariable:
+          rid: -2
+    - rid: 7762887664487105157
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: Attack
+        m_PortDataFlowType: 1
+        m_IsFloating: 1
+        m_NodeModel:
+          rid: 1157207992503894212
+        m_Connections:
+        - rid: 7762887664487105159
+    - rid: 7762887664487105158
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: LoadUnits
+        m_PortDataFlowType: 1
+        m_IsFloating: 1
+        m_NodeModel:
+          rid: 1157207992503894212
+        m_Connections:
+        - rid: 7762887664487105161
+    - rid: 7762887664487105159
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: InputPort
+        m_PortDataFlowType: 0
+        m_IsFloating: 1
+        m_NodeModel:
+          rid: 7762887664487105154
+        m_Connections:
+        - rid: 7762887664487105157
+    - rid: 7762887664487105160
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: OutputPort
+        m_PortDataFlowType: 1
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 7762887664487105154
+        m_Connections: []
+    - rid: 7762887664487105161
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: InputPort
+        m_PortDataFlowType: 0
+        m_IsFloating: 1
+        m_NodeModel:
+          rid: 7762887664487105155
+        m_Connections:
+        - rid: 7762887664487105158
+    - rid: 7762887664487105162
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: OutputPort
+        m_PortDataFlowType: 1
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 7762887664487105155
+        m_Connections: []
+    - rid: 7762887664487105163
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: 0.25
 --- !u!114 &3964442407641389249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2160,7 +2277,7 @@ MonoBehaviour:
           rid: 1157207994328417027
         m_EndedNodes:
           rid: 1157207994328417028
-        m_VersionTimestamp: 638970366136786113
+        m_VersionTimestamp: 638984632182944670
     - rid: 1157207994268647429
       type: {class: BlackboardReference, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -2590,6 +2707,8 @@ MonoBehaviour:
           rid: 1157207994268647436
         TargetGameObject:
           rid: 1157207994268647441
+        MoveThreshold:
+          rid: 7762887664487104512
     - rid: 1157207994328417123
       type: {class: TriggerEventAction, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -2659,6 +2778,14 @@ MonoBehaviour:
           m_Value1: 0
         Name: 
         m_Value: 2
+    - rid: 7762887664487104512
+      type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: 0.25
 --- !u!114 &7862395593373698434
 MonoBehaviour:
   m_ObjectHideFlags: 1
